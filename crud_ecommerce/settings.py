@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+#sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     #myapps
     'apps.products',
     'apps.categories',
@@ -62,7 +63,7 @@ ROOT_URLCONF = 'crud_ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

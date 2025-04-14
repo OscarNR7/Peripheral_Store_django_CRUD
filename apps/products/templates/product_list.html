@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Productos{% endblock %}
+
+{% block content %}
+    <h1>Lista de productos</h1>
+    <ul>
+        <!-- Iteramos sobre los productos pasados desde la vista -->
+        {% for product in products %}
+            <li>
+                <h2>{{ product.name }}</h2>  <!-- Mostrar el nombre del producto -->
+                <p>{{ product.description }}</p>  <!-- Mostrar la descripción del producto -->
+                <p>Precio: ${{ product.price }}</p>  <!-- Mostrar el precio del producto -->
+                {% for image in product.images.all %}
+                    <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" width="200" />
+                {% endfor %}
+            </li>
+        {% empty %}
+            <p>No hay productos disponibles.</p>  <!-- Mensaje si no hay productos -->
+        {% endfor %}
+    </ul>
+
+{% endblock %}

@@ -24,7 +24,8 @@ class Product (models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
 
-    class MEta:
+    class Meta:
+        app_label = 'products'
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
         ordering = ['-created_at']
