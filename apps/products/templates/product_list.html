@@ -1,23 +1,103 @@
 {% extends "base.html" %}
-
-{% block title %}Productos{% endblock %}
-
 {% block content %}
-    <h1>Lista de productos</h1>
-    <ul>
-        <!-- Iteramos sobre los productos pasados desde la vista -->
-        {% for product in products %}
-            <li>
-                <h2>{{ product.name }}</h2>  <!-- Mostrar el nombre del producto -->
-                <p>{{ product.description }}</p>  <!-- Mostrar la descripción del producto -->
-                <p>Precio: ${{ product.price }}</p>  <!-- Mostrar el precio del producto -->
-                {% for image in product.images.all %}
-                    <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" width="200" />
+<div class="container">
+    <h1>Product List</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="get" class="form-inline">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search products..." value="{{ query }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 text-right">
+            <a href="{% url 'products:product_create' %}" class="btn btn-success">New Product</a>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>${{ product.price }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td>{{ product.category.name }}</td>
+                    <td>
+                        {% if product.status == 'active' %}
+                            <span class="badge badge-success">Active</span>
+                        {% elif product.status == 'inactive' %}
+                            <span class="badge badge-secondary">Inactive</span>
+                        {% else %}
+                            <span class="badge badge-danger">Out of Stock</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-info btn-sm">View</a>
+                        <a href="{% url 'products:product_update' product.slug %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'products:product_delete' product.slug %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No products available</td>
+                </tr>
                 {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% if is_paginated %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
             </li>
-        {% empty %}
-            <p>No hay productos disponibles.</p>  <!-- Mensaje si no hay productos -->
-        {% endfor %}
-    </ul>
-
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+            {% endif %}
+            
+            {% for i in paginator.page_range %}
+            {% if page_obj.number == i %}
+            <li class="page-item active">
+                <span class="page-link">{{ i }}</span>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}">{{ i }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
 {% endblock %}
