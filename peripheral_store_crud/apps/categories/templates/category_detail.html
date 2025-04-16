@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} - Details{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'categories:category_list' %}">Categories</a></li>
+                <li class="breadcrumb-item active">{{ category.name }}</li>
+            </ol>
+        </nav>
+        <h1>{{ category.name }}</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <div class="btn-group">
+            <a href="{% url 'categories:category_update' category.pk %}" class="btn btn-primary">
+                Edit
+            </a>
+            <a href="{% url 'categories:category_delete' category.pk %}" class="btn btn-danger">
+                Delete
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Category Information</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <dl>
+                    <dt>Name:</dt>
+                    <dd>{{ category.name }}</dd>
+
+                    {% if category.parent %}
+                    <dt>Parent Category:</dt>
+                    <dd>
+                        <a href="{% url 'categories:category_detail' category.parent.pk %}">
+                            {{ category.parent.name }}
+                        </a>
+                    </dd>
+                    {% endif %}
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dt>Description:</dt>
+                <dd>
+                    {% if category.description %}
+                        {{ category.description }}
+                    {% else %}
+                        <span class="text-muted">No description</span>
+                    {% endif %}
+                </dd>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if category.children.exists %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Subcategories</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subcategory in category.children.all %}
+                    <tr>
+                        <td>{{ subcategory.name }}</td>
+                        <td>
+                            {% if subcategory.description %}
+                                {{ subcategory.description|truncatewords:10 }}
+                            {% else %}
+                                <span class="text-muted">No description</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'categories:category_detail' subcategory.pk %}" class="btn btn-outline-primary">View</a>
+                                <a href="{% url 'categories:category_update' subcategory.pk %}" class="btn btn-outline-secondary">Edit</a>
+                                <a href="{% url 'categories:category_delete' subcategory.pk %}" class="btn btn-outline-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if attributes %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Attributes</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attribute in attributes %}
+                    <tr>
+                        <td>{{ attribute.name }}</td>
+                        <td>{{ attribute.get_attribute_type_display }}</td>
+                        <td>
+                            {% if attribute.required %}
+                                <span class="badge bg-success">Yes</span>
+                            {% else %}
+                                <span class="badge bg-secondary">No</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if attribute.default_value %}
+                                {{ attribute.default_value }}
+                            {% else %}
+                                <span class="text-muted">--</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    This category has no defined attributes.
+</div>
+{% endif %}
+{% endblock %}

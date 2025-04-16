@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h1>{{ product.name }}</h1>
+        </div>
+        <div class="col-md-4 text-right">
+            <a href="{% url 'products:product_list' %}" class="btn btn-secondary">Back to List</a>
+            <a href="{% url 'products:product_update' product.slug %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'products:product_delete' product.slug %}" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            {% if product.images.filter.exists %}
+                <img src="{{ product.images.filter.first.image.url }}" class="img-fluid" alt="{{ product.name }}">
+            {% else %}
+                <div class="bg-light p-5 text-center">
+                    <p>No image</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Product Details</h5>
+                    <p><strong>Price:</strong> ${{ product.price }}</p>
+                    <p><strong>Category:</strong> {{ product.category.name }}</p>
+                    <p><strong>Stock:</strong> {{ product.stock }}</p>
+                    <p><strong>SKU:</strong> {{ product.sku }}</p>
+                    <p><strong>Brand:</strong> {{ product.brand|default:"Not specified" }}</p>
+                    <p><strong>Status:</strong> 
+                        {% if product.status == 'active' %}
+                            <span class="badge badge-success">Active</span>
+                        {% elif product.status == 'inactive' %}
+                            <span class="badge badge-secondary">Inactive</span>
+                        {% else %}
+                            <span class="badge badge-danger">Out of Stock</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Featured:</strong> {% if product.featured %}Yes{% else %}No{% endif %}</p>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Description</h5>
+                    <p>{{ product.description }}</p>
+                </div>
+            </div>
+            
+            {% if product.specifications.exists %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Specifications</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for spec in product.specifications.all %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>{{ spec.name }}</span>
+                            <span>{{ spec.value }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
