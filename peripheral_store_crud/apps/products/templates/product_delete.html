@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <!-- Confirmation card -->
+            <div class="card">
+                <!-- Red header -->
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Confirm Deletion</h5>
+                </div>
+
+                <div class="card-body">
+                    <!-- Warning message with product name -->
+                    <p>Are you sure you want to delete the product <strong>{{ product.name }}</strong>?</p>
+                    <p class="text-danger">This action cannot be undone.</p>
+                    
+                    <!-- Deletion confirmation form -->
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Action buttons -->
+                        <div class="d-flex justify-content-between">
+                            <!-- Cancel: redirects to product detail -->
+                            <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-secondary">Cancel</a>
+                            <!-- Delete: submits the POST request -->
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

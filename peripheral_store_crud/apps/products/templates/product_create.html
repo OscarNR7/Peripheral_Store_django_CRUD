@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h1>{% if product %}Edit{% else %}New{% endif %} Product</h1>
+        </div>
+        <div class="col-md-4 text-right">
+            <a href="{% url 'products:product_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Main form errors -->
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Tabs to organize content -->
+                <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Basic Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="images-tab" data-toggle="tab" href="#images" role="tab" aria-controls="images" aria-selected="false">Images</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="specs-tab" data-toggle="tab" href="#specs" role="tab" aria-controls="specs" aria-selected="false">Specifications</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-3" id="productTabContent">
+                    <!-- Tab: Basic Information -->
+                    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.name.id_for_label }}">Name</label>
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.name.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.category.id_for_label }}">Category</label>
+                                    {{ form.category }}
+                                    {% if form.category.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.category.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.price.id_for_label }}">Price</label>
+                                    {{ form.price }}
+                                    {% if form.price.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.price.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.stock.id_for_label }}">Stock</label>
+                                    {{ form.stock }}
+                                    {% if form.stock.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.stock.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.sku.id_for_label }}">SKU</label>
+                                    {{ form.sku }}
+                                    {% if form.sku.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.sku.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.brand.id_for_label }}">Brand</label>
+                                    {{ form.brand }}
+                                    {% if form.brand.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.brand.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.status.id_for_label }}">Status</label>
+                                    {{ form.status }}
+                                    {% if form.status.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.status.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.description.id_for_label }}">Description</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">
+                                {% for error in form.description.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-check">
+                            {{ form.featured }}
+                            <label class="form-check-label" for="{{ form.featured.id_for_label }}">
+                                Featured Product
+                            </label>
+                            {% if form.featured.errors %}
+                            <div class="text-danger">
+                                {% for error in form.featured.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Tab: Images -->
+                    <div class="tab-pane fade" id="images" role="tabpanel" aria-labelledby="images-tab">
+                        {{ image_formset.management_form }}
+                        {% for form in image_formset %}
+                        <div class="card mb-3 image-form">
+                            <div class="card-body">
+                                {% if form.instance.pk and form.instance.image %}
+                                <div class="mb-3">
+                                    <img src="{{ form.instance.image.url }}" alt="{{ form.instance.alt_text }}" class="img-thumbnail" style="max-height: 150px;">
+                                </div>
+                                {% endif %}
+
+                                {{ form.id }}
+                                {% if form.instance.pk %}{{ form.DELETE }}{% endif %}
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Image</label>
+                                            {{ form.image }}
+                                            {% if form.image.errors %}
+                                            <div class="text-danger">{{ form.image.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Alt Text</label>
+                                            {{ form.alt_text }}
+                                            {% if form.alt_text.errors %}
+                                            <div class="text-danger">{{ form.alt_text.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-check">
+                                    {{ form.is_main }}
+                                    <label class="form-check-label" for="{{ form.is_main.id_for_label }}">
+                                        Main Image
+                                    </label>
+                                    {% if form.is_main.errors %}
+                                    <div class="text-danger">{{ form.is_main.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                {% if form.instance.pk %}
+                                <div class="form-check mt-2">
+                                    <label class="form-check-label text-danger">
+                                        <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}" class="form-check-input delete-checkbox">
+                                        Delete this image
+                                    </label>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <button type="button" class="btn btn-outline-primary" id="add-image">
+                            <i class="fas fa-plus"></i> Add another image
+                        </button>
+                    </div>
+
+                    <!-- Tab: Specifications -->
+                    <div class="tab-pane fade" id="specs" role="tabpanel" aria-labelledby="specs-tab">
+                        {{ spec_formset.management_form }}
+                        <div id="spec-formset">
+                            {% for form in spec_formset %}
+                            <div class="card mb-3 spec-form">
+                                <div class="card-body">
+                                    {{ form.id }}
+                                    {% if form.instance.pk %}{{ form.DELETE }}{% endif %}
+
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <label>Name</label>
+                                                {{ form.name }}
+                                                {% if form.name.errors %}
+                                                <div class="text-danger">{{ form.name.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <label>Value</label>
+                                                {{ form.value }}
+                                                {% if form.value.errors %}
+                                                <div class="text-danger">{{ form.value.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            {% if form.instance.pk %}
+                                            <div class="form-check mt-4">
+                                                <label class="form-check-label text-danger">
+                                                    <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}" class="form-check-input delete-checkbox">
+                                                    Delete
+                                                </label>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="button" class="btn btn-outline-primary" id="add-spec">
+                            <i class="fas fa-plus"></i> Add another specification
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% block extra_js %}
+<script>
+    // Script para añadir más imágenes dinámicamente
+    $(document).ready(function() {
+        const imageFormset = $('#images');
+        const totalImageForms = $('#id_images-TOTAL_FORMS');
+        
+        $('#add-image').click(function() {
+            const formCount = parseInt(totalImageForms.val());
+            const newForm = $('.image-form:first').clone(true);
+            
+            // Limpiar los valores
+            newForm.find('input:not([type=hidden])').val('');
+            newForm.find('input[type=checkbox]').prop('checked', false);
+            newForm.find('img').remove();
+            
+            // Actualizar IDs y nombres
+            newForm.find('input, select, textarea').each(function() {
+                const name = $(this).attr('name').replace('-0-', '-' + formCount + '-');
+                const id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id});
+            });
+            
+            // Insertar el nuevo form
+            $('.image-form:last').after(newForm);
+            totalImageForms.val(formCount + 1);
+        });
+
+        // Script para añadir más especificaciones dinámicamente
+        const specFormset = $('#specs');
+        const totalSpecForms = $('#id_specs-TOTAL_FORMS');
+        
+        $('#add-spec').click(function() {
+            const formCount = parseInt(totalSpecForms.val());
+            const newForm = $('.spec-form:first').clone(true);
+            
+            // Limpiar los valores
+            newForm.find('input:not([type=hidden])').val('');
+            
+            // Actualizar IDs y nombres
+            newForm.find('input, select, textarea').each(function() {
+                const name = $(this).attr('name').replace('-0-', '-' + formCount + '-');
+                const id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id});
+            });
+            
+            // Insertar el nuevo form
+            $('.spec-form:last').after(newForm);
+            totalSpecForms.val(formCount + 1);
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

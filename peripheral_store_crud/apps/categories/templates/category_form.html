@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if category %}Edit Category{% else %}New Category{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .formset-row {
+        background-color: #f8f9fa;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+    .delete-row {
+        color: #dc3545;
+        cursor: pointer;
+    }
+    .add-row {
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'categories:category_list' %}">Categories</a></li>
+                {% if category %}
+                    <li class="breadcrumb-item"><a href="{% url 'categories:category_detail' category.pk %}">{{ category.name }}</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                {% else %}
+                    <li class="breadcrumb-item active">New Category</li>
+                {% endif %}
+            </ol>
+        </nav>
+        <h1>{% if category %}Edit Category{% else %}New Category{% endif %}</h1>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h4>Basic Information</h4>
+
+                    <div class="mb-3">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">Name *</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.name.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.parent.id_for_label }}" class="form-label">Parent Category</label>
+                        {{ form.parent }}
+                        {% if form.parent.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.parent.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Leave blank if it is a main category</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.description.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <h4>Attributes</h4>
+            <div class="alert alert-info">
+                Attributes define the properties that items in this category will have.
+            </div>
+
+            {{ attribute_formset.management_form }}
+            <div id="attribute-formset">
+                {% for attribute_form in attribute_formset %}
+                    <div class="formset-row">
+                        {% if attribute_form.instance.pk %}{{ attribute_form.DELETE }}{% endif %}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Name *</label>
+                                    {{ attribute_form.name }}
+                                    {% if attribute_form.name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ attribute_form.name.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    {{ attribute_form.description }}
+                                    {% if attribute_form.description.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ attribute_form.description.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label class="form-label">Required</label>
+                                    <div class="form-check">
+                                        {{ attribute_form.is_required }}
+                                        <label class="form-check-label" for="{{ attribute_form.is_required.id_for_label }}">
+                                            Yes
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label class="form-label">Filterable</label>
+                                    <div class="form-check">
+                                        {{ attribute_form.is_filterable }}
+                                        <label class="form-check-label" for="{{ attribute_form.is_filterable.id_for_label }}">
+                                            Yes
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                {% if attribute_form.instance.pk %}
+                                    <div class="mb-3 text-end">
+                                        <label class="form-label d-block">Delete</label>
+                                        <label class="form-check-label delete-row" for="{{ attribute_form.DELETE.id_for_label }}">
+                                            <i class="bi bi-trash"></i>
+                                        </label>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {{ attribute_form.id }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-end add-row">
+                <button type="button" id="add-attribute" class="btn btn-outline-primary">
+                    <i class="bi bi-plus-circle"></i> Add Attribute
+                </button>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% if category %}{% url 'categories:category_detail' category.pk %}{% else %}{% url 'categories:category_list' %}{% endif %}" class="btn btn-secondary">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    {% if category %}Update{% else %}Create{% endif %} Category
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formsetContainer = document.getElementById('attribute-formset');
+        const addButton = document.getElementById('add-attribute');
+        const totalFormsInput = document.querySelector('[name="attributes-TOTAL_FORMS"]');
+        
+        let formCount = parseInt(totalFormsInput.value);
+        
+        addButton.addEventListener('click', function() {
+            const newForm = formsetContainer.querySelector('.formset-row').cloneNode(true);
+            const newFormHTML = newForm.innerHTML.replace(/attributes-\d+/g, `attributes-${formCount}`);
+            newForm.innerHTML = newFormHTML;
+            newForm.querySelectorAll('input[type="text"], textarea, select').forEach(input => {
+                input.value = '';
+            });
+            newForm.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            const deleteField = newForm.querySelector('input[type="checkbox"][name$="DELETE"]');
+            if (deleteField) {
+                deleteField.checked = false;
+            }
+            formsetContainer.appendChild(newForm);
+            formCount++;
+            totalFormsInput.value = formCount;
+        });
+
+        formsetContainer.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-row') || (e.target.parentElement && e.target.parentElement.classList.contains('delete-row'))) {
+                const checkbox = e.target.closest('.formset-row').querySelector('input[type="checkbox"][name$="DELETE"]');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    const row = e.target.closest('.formset-row');
+                    row.style.opacity = checkbox.checked ? '0.5' : '1';
+                }
+            }
+        });
+
+        document.querySelectorAll('input[type="checkbox"][name$="DELETE"]').forEach(checkbox => {
+            if (checkbox.checked) {
+                checkbox.closest('.formset-row').style.opacity = '0.5';
+            }
+        });
+    });
+</script>
+{% endblock %}
