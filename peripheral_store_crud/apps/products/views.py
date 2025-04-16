@@ -36,7 +36,6 @@ class ProductDetailView(DetailView):
     success_url = reverse_lazy('products:product_list')
 
 #CRUD
-#Reemplazamos CreateView y UpdateView con vistas basadas en clases que manejen formsets
 class ProductCreateView(View):
     template_name = "product_create.html"
 
