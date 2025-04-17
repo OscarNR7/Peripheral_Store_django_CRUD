@@ -2,6 +2,15 @@
 {% block content %}
 <div class="container">
     <div class="row mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Products</a></li>
+            {% if product %}
+                <li class="breadcrumb-item"><a href="{% url 'products:product_detail' product.slug %}">{{ product.name }}</a></li>
+                <li class="breadcrumb-item active">Edit</li>
+            {% else %}
+                <li class="breadcrumb-item active">New Product</li>
+            {% endif %}
+        </ol>
         <div class="col-md-8">
             <h1>{% if product %}Edit{% else %}New{% endif %} Product</h1>
         </div>

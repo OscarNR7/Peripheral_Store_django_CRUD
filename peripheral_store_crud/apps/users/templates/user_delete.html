@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Eliminar Usuario{% endblock %}
+{% block title %}Delete User{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -8,17 +8,17 @@
     <div class="col-md-6">
       <div class="card">
         <div class="card-header bg-danger text-white">
-          <h3 class="card-title mb-0">Eliminar Usuario</h3>
+          <h3 class="card-title mb-0">Delete User</h3>
         </div>
         <div class="card-body text-center">
-          <h5 class="mb-4">¿Estás seguro de que deseas eliminar el usuario "{{ object.username }}"?</h5>
-          <p class="text-danger">Esta acción no se puede deshacer.</p>
+          <h5 class="mb-4">Are you sure you want to delete the user "{{ object.username }}"?</h5>
+          <p class="text-danger">This action cannot be undone.</p>
           
           <form method="post">
             {% csrf_token %}
             <div class="mt-4">
-              <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
-              <a href="{% if request.user.is_staff %}{% url 'users:user_list' %}{% else %}{% url 'users:profile_detail' pk=object.pk %}{% endif %}" class="btn btn-secondary ml-2">Cancelar</a>
+              <button type="submit" class="btn btn-danger">Confirm Deletion</button>
+              <a href="{% if request.user.is_staff %}{% url 'users:user_list' %}{% else %}{% url 'users:profile_detail' pk=object.pk %}{% endif %}" class="btn btn-secondary ml-2">Cancel</a>
             </div>
           </form>
         </div>

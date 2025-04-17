@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
 
-{% block title %}Registro de Usuario{% endblock %}
+{% block title %}Profile of {{ user.first_name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -9,19 +8,45 @@
     <div class="col-md-8">
       <div class="card">
         <div class="card-header bg-primary text-white">
-          <h3 class="card-title mb-0">Crear Cuenta</h3>
+          <h3 class="card-title mb-0">{{ user.first_name }}'s Profile</h3>
         </div>
         <div class="card-body">
-          <form method="post">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <div class="text-center mt-4">
-              <button type="submit" class="btn btn-primary">Registrar</button>
+          <div class="text-center mb-4">
+            {% if profile and profile.avatar %}
+              <img src="{{ profile.avatar.url }}" alt="Avatar" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px;">
+            {% else %}
+              <img src="https://via.placeholder.com/150" alt="Default Avatar" class="rounded-circle img-thumbnail">
+            {% endif %}
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <h5>Account Information</h5>
+              <hr>
+              <p><strong>Username:</strong> {{ user.first_name }}</p>
+              <p><strong>Email:</strong> {{ user.email }}</p>
+              <p><strong>Registration Date:</strong> {{ user.date_joined|date:"d/m/Y" }}</p>
             </div>
-          </form>
-          <hr>
-          <div class="text-center">
-            <p>¿Ya tienes una cuenta? <a href="{% url 'users:login' %}">Inicia Sesión</a></p>
+            
+            <div class="col-md-6">
+              <h5>Personal Information</h5>
+              <hr>
+              {% if profile %}
+                <p><strong>First Name:</strong> {{ user.first_name|default:"Not specified" }}</p>
+                <p><strong>Last Name:</strong> {{ user.last_name|default:"Not specified" }}</p>
+                <p><strong>Phone:</strong> {{ user.phone_number|default:"Not specified" }}</p>
+                <p><strong>Address:</strong> {{ user.address|default:"Not specified" }}</p>
+              {% else %}
+                <p>No profile information available.</p>
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="mt-4 text-center">
+            <a href="{% url 'users:profile_update' pk=user.pk %}" class="btn btn-primary">Edit Profile</a>
+            {% if user.is_staff or request.user == user %}
+              <a href="{% url 'users:user_delete' pk=user.pk %}" class="btn btn-danger ml-2">Delete Account</a>
+            {% endif %}
           </div>
         </div>
       </div>

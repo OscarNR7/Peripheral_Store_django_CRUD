@@ -19,7 +19,7 @@ class UserLoginView(LoginView):
 
     def get_success_url(self):
         if self.request.user.is_staff:
-            return reverse_lazy('dashboard')
+            return reverse_lazy('dashboard:index')
         return reverse_lazy('user_profile', kwargs={'pk': self.request.user.pk})
     
 class CustomLogoutView(LogoutView):
