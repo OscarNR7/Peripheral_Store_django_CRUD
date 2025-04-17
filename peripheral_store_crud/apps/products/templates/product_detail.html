@@ -2,6 +2,12 @@
 {% block content %}
 <div class="container">
     <div class="row mb-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Products</a></li>
+                <li class="breadcrumb-item active">{{ product.name }}</li>
+            </ol>
+        </nav>
         <div class="col-md-8">
             <h1>{{ product.name }}</h1>
         </div>

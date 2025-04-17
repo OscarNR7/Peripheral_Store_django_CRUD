@@ -23,20 +23,82 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarContent">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav me-auto">
+                        {% if user.is_authenticated and user.is_staff %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'products:product_list' %}">Productos</a>
+                            <a class="nav-link" href="{% url 'dashboard:index' %}">Dashboard</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'products:product_list' %}">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'categories:category_list' %}">Categorías</a>
+                            <a class="nav-link" href="{% url 'categories:category_list' %}">Categories</a>
                         </li>
-                        
                         <li class="nav-item"><a class="nav-link" href="#">Cart</a></li>
-                        <!-- Agrega más enlaces según sea necesario -->
+                    </ul>
+                    
+                    <ul class="navbar-nav ms-auto">
+                        {% if user.is_authenticated %}
+                            <!-- User dropdown menu -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                   {% if user.profile and user.profile.avatar %}
+                                       <img src="{{ user.profile.avatar.url }}" alt="Avatar" 
+                                            class="rounded-circle" width="30" height="30">
+                                   {% else %}
+                                       <i class="fas fa-user-circle"></i>
+                                   {% endif %}
+                                   {{ user.get_short_name|default:user.email }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'users:profile_detail' pk=user.pk %}">
+                                            <i class="fas fa-user me-2"></i>My Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'users:profile_update' pk=user.pk %}">
+                                            <i class="fas fa-cog me-2"></i>Settings
+                                        </a>
+                                    </li>
+                                    {% if user.is_staff %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'users:user_list' %}">
+                                            <i class="fas fa-users me-2"></i>Manage Users
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form method="post" action="{% url 'users:logout' %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Log Out
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'users:login' %}">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Log In
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'users:register' %}">
+                                    <i class="fas fa-user-plus me-1"></i>Sign Up
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
         </nav>
+        
 
         <!--Main Content-->
         <main class="container">
