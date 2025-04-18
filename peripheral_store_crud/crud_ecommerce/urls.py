@@ -25,8 +25,9 @@ urlpatterns = [
 
     path('', RedirectView.as_view(url='/dashboard/', permanent=False)),
     path('dashboard/', include('apps.dashboard.urls')),
-    path('dashboard/categories', include('apps.categories.urls')),
-    path('dashboard/products', include('apps.products.urls')),
+    path('dashboard/categories/', include('apps.categories.urls')),
+    path('dashboard/products/', include('apps.products.urls')),
+    path('dashboard/orders/', include('apps.orders.urls', namespace='orders')),
     path('', include('apps.users.urls')),
 ]
 

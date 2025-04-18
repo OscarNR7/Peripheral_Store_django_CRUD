@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if object.pk %}Edit Order #{{ object.order_number }}{% else %}New Order{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{% if object.pk %}Edit Order #{{ object.order_number }}{% else %}New Order{% endif %}</h1>
+        <div>
+            <a href="{% if object %}{% url 'orders:order_detail' order_number=object.order_number %}{% else %}{% url 'orders:order_list' %}{% endif %}" 
+               class="btn btn-outline-secondary">
+                <i class="bi bi-x"></i> Cancel
+            </a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="post" novalidate enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Order Information</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.status|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.payment_status|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.payment_method|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.tracking_number|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        {{ form.notes|as_crispy_field }}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Financial Details</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.subtotal|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.shipping_cost|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.tax|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.discount|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Shipping Information</h4>
+                        {{ form.shipping_address|as_crispy_field }}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Billing Information</h4>
+                        {{ form.billing_address|as_crispy_field }}
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> 
+                        {% if object.pk %}Save Changes{% else %}Create Order{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

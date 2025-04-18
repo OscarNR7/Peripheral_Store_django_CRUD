@@ -1,11 +1,13 @@
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
+from django.db.models import Avg
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views import View
 from .models import Product
 from .forms import ProductForm, ProductImageFormSet, ProductSpecificationFormSet
-
+from apps.users.models import User
 
 # Create your views here.
 

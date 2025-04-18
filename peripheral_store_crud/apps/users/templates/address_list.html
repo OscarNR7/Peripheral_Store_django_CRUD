@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Addresses{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">My Addresses</h1>
+            
+            <div class="mb-4">
+                <a href="{% url 'users:address_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Address
+                </a>
+                
+                <div class="btn-group ms-2">
+                    <a href="{% url 'users:address_list' %}" class="btn btn-outline-secondary {% if address_type == 'all' %}active{% endif %}">
+                        All
+                    </a>
+                    <a href="{% url 'users:address_list' %}?type=billing" class="btn btn-outline-secondary {% if address_type == 'billing' %}active{% endif %}">
+                        Billing
+                    </a>
+                    <a href="{% url 'users:address_list' %}?type=shipping" class="btn btn-outline-secondary {% if address_type == 'shipping' %}active{% endif %}">
+                        Shipping
+                    </a>
+                </div>
+            </div>
+            
+            {% if addresses %}
+                <div class="row">
+                    {% for address in addresses %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">
+                                        {{ address.get_address_type_display }}
+                                        {% if address.is_default %}
+                                            <span class="badge bg-success">Default</span>
+                                        {% endif %}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>{{ address.name }}</strong></p>
+                                    <p class="mb-1">{{ address.street_address1 }}</p>
+                                    {% if address.street_address2 %}
+                                        <p class="mb-1">{{ address.street_address2 }}</p>
+                                    {% endif %}
+                                    <p class="mb-1">{{ address.city }}, {{ address.state_province }} {{ address.postal_code }}</p>
+                                    <p class="mb-1">{{ address.country }}</p>
+                                    <p class="mb-3">Phone: {{ address.phone }}</p>
+                                    
+                                    <div class="d-flex">
+                                        <a href="{% url 'users:address_update' address.id %}" class="btn btn-sm btn-outline-primary me-2">
+                                            Edit
+                                        </a>
+                                        {% if not address.is_default %}
+                                            <form method="post" action="{% url 'users:set_default_address' address.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-success me-2">
+                                                    Set as Default
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                        <a href="{% url 'users:address_delete' address.id %}" class="btn btn-sm btn-outline-danger">
+                                            Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    You don't have any saved addresses. <a href="{% url 'users:address_create' %}">Add a new address</a>.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

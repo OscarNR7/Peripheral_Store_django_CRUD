@@ -1,12 +1,13 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.contrib import messages
-from .models import User, Profile
-from .forms import CustomUserCreationForm, CustomUserLoginForm, CustomUserChangeForm, ProfileForm
+from .models import User, Profile, Address
+from .forms import CustomUserCreationForm, CustomUserLoginForm, CustomUserChangeForm, ProfileForm, AddressForm
 
 
 # Create your views here.
@@ -20,7 +21,7 @@ class UserLoginView(LoginView):
     def get_success_url(self):
         if self.request.user.is_staff:
             return reverse_lazy('dashboard:index')
-        return reverse_lazy('user_profile', kwargs={'pk': self.request.user.pk})
+        return reverse_lazy('users:profile_detail', kwargs={'pk': self.request.user.pk})
     
 class CustomLogoutView(LogoutView):
     '''
@@ -58,10 +59,23 @@ class UserProfileView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            context['profile'] = self.get_object().profile
-        except Profile.DoesNotExist:
-            context['profile'] = None
+        user = self.get_object()
+        
+        addresses = user.addresses.all()
+        
+        context.update({
+            'profile': user.profile if hasattr(user, 'profile') else None,
+            'default_billing': addresses.filter(
+                address_type='billing', 
+                is_default=True
+            ).first(),
+            'default_shipping': addresses.filter(
+                address_type='shipping', 
+                is_default=True
+            ).first(),
+            'has_addresses': addresses.exists()
+        })
+        
         return context
 
 class UserUpdateView(View):
@@ -142,3 +156,84 @@ class UserDeleteView(DeleteView):
         user_obj = self.get_object()
         messages.success(request, f'Usuario {user_obj.email} eliminado correctamente.')
         return super().delete(request, *args, **kwargs)
+
+#Address management
+class SetDefaultAddressView(View):
+    """
+    Vista para establecer una dirección como predeterminada
+    """
+    def post(self, request, pk):
+        address = get_object_or_404(Address, pk=pk, user=request.user)
+        
+        # Establecer esta dirección como predeterminada para su tipo
+        Address.objects.filter(
+            user=request.user,
+            address_type=address.address_type
+        ).update(is_default=False)
+        
+        address.is_default = True
+        address.save()
+        
+        messages.success(request, f"{address.get_address_type_display()} address set as default")
+        return redirect('users:address_list')
+class AddressListView(LoginRequiredMixin, ListView):
+    '''
+    Vista para listar las direcciones de un usuario
+    '''
+    model = Address
+    template_name = 'address_list.html'
+    context_object_name = 'addresses'
+    
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+
+class AddressCreateView(LoginRequiredMixin, CreateView):
+    '''
+    Vista para crear una nueva dirección
+    '''
+    model = Address
+    form_class = AddressForm
+    template_name = 'address_form.html'
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
+    def get_success_url(self):
+        messages.success(self.request, 'Address added successfully')
+        return reverse('users:address_list')
+
+class AddressUpdateView(LoginRequiredMixin, UpdateView):
+    '''
+    Vista para actualizar una dirección existente
+    '''
+    model = Address
+    form_class = AddressForm
+    template_name = 'address_form.html'
+    
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
+    def get_success_url(self):
+        messages.success(self.request, 'Address updated successfully')
+        return reverse('users:address_list')
+
+class AddressDeleteView(LoginRequiredMixin, DeleteView):
+    '''
+    Vista para eliminar una dirección
+    '''
+    model = Address
+    template_name = 'address_confirm_delete.html'
+    
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+    
+    def get_success_url(self):
+        messages.success(self.request, 'Address deleted successfully')
+        return reverse('users:address_list')
