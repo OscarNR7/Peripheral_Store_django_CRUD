@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
-from .models import User, Profile
+from .models import User, Profile, Address
 
 # SignUp Form
 class CustomUserCreationForm(UserCreationForm):
@@ -55,3 +55,33 @@ class ProfileForm(forms.ModelForm):
             "bio": forms.Textarea(attrs={'placeholder': 'Tell us about yourself...'}),
             "date_of_birth": forms.DateInput(attrs={'type': 'date'}),
         }
+class AddressForm(forms.ModelForm):
+    '''
+    Form for managing user addresses
+    '''
+    class Meta:
+        model = Address
+        exclude = ('user', 'created_at', 'updated_at')
+        widgets = {
+            "name": forms.TextInput(attrs={'placeholder': 'Full name'}),
+            "street_address1": forms.TextInput(attrs={'placeholder': 'Street Address 1'}),
+            "street_address2": forms.TextInput(attrs={'placeholder': 'Street Address 2 (optional)'}),
+            "city": forms.TextInput(attrs={'placeholder': 'City'}),
+            "state_province": forms.TextInput(attrs={'placeholder': 'State/Province'}),
+            "postal_code": forms.TextInput(attrs={'placeholder': 'Postal code'}),
+            "country": forms.TextInput(attrs={'placeholder': 'Country'}),
+            "phone": forms.TextInput(attrs={'placeholder': 'Phone number'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.user:
+            instance.user = self.user
+        if commit:
+            instance.save()
+        return instance

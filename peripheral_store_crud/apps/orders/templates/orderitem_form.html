@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Order Item{% else %}Add Order Item{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{% if form.instance.pk %}Edit Order Item{% else %}Add Order Item{% endif %}</h1>
+        <div>
+            <a href="{% url 'orders:order_detail' order_number=order.order_number %}" class="btn btn-outline-secondary">
+                <i class="bi bi-x"></i> Cancel
+            </a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Order #{{ order.order_number }}</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form.product|as_crispy_field }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.quantity|as_crispy_field }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.price|as_crispy_field }}
+                    </div>
+                </div>
+                
+                {% if form.instance.pk %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <strong>Subtotal:</strong> ${{ form.instance.subtotal|floatformat:2 }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> 
+                        {% if form.instance.pk %}Save Changes{% else %}Add Item{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
