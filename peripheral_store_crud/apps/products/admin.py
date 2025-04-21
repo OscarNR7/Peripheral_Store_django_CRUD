@@ -14,6 +14,6 @@ class ProductSpecificationInline(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'stock', 'category', 'status', 'created_at')
     list_filter = ('category', 'status', 'featured')
-    search_fields = ('name', 'sku')
+    search_fields = ('name', 'sku','brand')
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline, ProductSpecificationInline]

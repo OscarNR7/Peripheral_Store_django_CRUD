@@ -16,20 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api-auth/', include('rest_framework.urls')),
 
-    path('', RedirectView.as_view(url='/dashboard/', permanent=False)),
+    path('', RedirectView.as_view(url='/home/catalog/', permanent=False)),
+    path('users/', include('apps.users.urls')),
     path('dashboard/', include('apps.dashboard.urls')),
     path('dashboard/categories/', include('apps.categories.urls')),
     path('dashboard/products/', include('apps.products.urls')),
     path('dashboard/orders/', include('apps.orders.urls', namespace='orders')),
-    path('', include('apps.users.urls')),
+    path('home/', include('apps.products.public_urls')),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

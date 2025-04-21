@@ -85,7 +85,7 @@
                             <td>{{ order.order_number }}</td>
                             <td>{{ order.user.get_full_name|default:order.user.email }}</td>
                             <td>{{ order.created_at|date:"M d, Y" }}</td>
-                            <td>${{ order.total_amount|floatformat:2 }}</td>
+                            <td>${{ order.total|floatformat:2 }}</td>
                             <td>
                                 {% if order.status == 'pending' %}
                                 <span class="badge bg-warning text-dark">Pending</span>

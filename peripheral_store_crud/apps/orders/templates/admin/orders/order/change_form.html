@@ -1,0 +1,33 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+    function setUnitPrice(select) {
+        if (select.value) {
+            // Obtener el precio del producto
+            fetch(`/api/products/${select.value}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const row = select.closest('tr');
+                    const unitPriceInput = row.querySelector('input[id$="-unit_price"]');
+                    if (unitPriceInput) {
+                        unitPriceInput.value = data.price;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    }
+
+    // Al cargar la página, configurar eventos para productos ya seleccionados
+    document.addEventListener('DOMContentLoaded', function() {
+        const productSelects = document.querySelectorAll('select[id$="-product"]');
+        productSelects.forEach(function(select) {
+            if (select.value) {
+                setUnitPrice(select);
+            }
+        });
+    });
+</script>
+{% endblock %}

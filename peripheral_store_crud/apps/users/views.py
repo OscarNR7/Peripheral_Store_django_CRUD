@@ -20,14 +20,14 @@ class UserLoginView(LoginView):
 
     def get_success_url(self):
         if self.request.user.is_staff:
-            return reverse_lazy('dashboard:index')
-        return reverse_lazy('users:profile_detail', kwargs={'pk': self.request.user.pk})
+            return reverse_lazy('public_products:catalog_list')
+        return reverse_lazy('public_products:catalog_list')
     
 class CustomLogoutView(LogoutView):
     '''
     Vista para el logout de usuarios
     '''
-    next_page = reverse_lazy('users:login')
+    next_page = reverse_lazy('public_products:catalog_list')
     
 class UserCreateView(CreateView):
     '''
@@ -45,7 +45,7 @@ class UserCreateView(CreateView):
         return response
     
     def get_success_url(self):
-        return reverse('users:profile_detail', kwargs={'pk': self.object.pk})
+        return reverse('public_products:catalog_list')
     
 #Gestion de usuarios: Perfil, actulizaciones y listado de usuarios
 

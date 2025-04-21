@@ -2,78 +2,93 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
-    <div class="row mb-3">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Products</a></li>
-                <li class="breadcrumb-item active">{{ product.name }}</li>
-            </ol>
-        </nav>
-        <div class="col-md-8">
-            <h1>{{ product.name }}</h1>
-        </div>
-        <div class="col-md-4 text-right">
-            <a href="{% url 'products:product_list' %}" class="btn btn-secondary">Back to List</a>
-            <a href="{% url 'products:product_update' product.slug %}" class="btn btn-warning">Edit</a>
-            <a href="{% url 'products:product_delete' product.slug %}" class="btn btn-danger">Delete</a>
-        </div>
-    </div>
-    
     <div class="row">
         <div class="col-md-4">
-            {% if product.images.filter.exists %}
-                <img src="{{ product.images.filter.first.image.url }}" class="img-fluid" alt="{{ product.name }}">
-            {% else %}
-                <div class="bg-light p-5 text-center">
-                    <p>No image</p>
-                </div>
-            {% endif %}
+          {% if product.images.exists %}
+            {% with main_image=product.images.filter.first %}
+              <img src="{{ main_image.image.url }}" class="img-fluid rounded shadow" alt="{{ main_image.alt_text }}">
+            {% endwith %}
+          {% else %}
+            <div class="bg-light p-5 text-center rounded">
+              <i class='bx bx-image-alt' style="font-size: 5rem; opacity: 0.5;"></i>
+              <p class="mt-3">No image available</p>
+            </div>
+          {% endif %}
+          
+          {% if product.images.count > 1 %}
+            <div class="row mt-3">
+              {% for image in product.images.all %}
+                {% if not forloop.first %}
+                  <div class="col-3 mb-2">
+                    <img src="{{ image.image.url }}" class="img-thumbnail" alt="{{ image.alt_text }}">
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
+        
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Product Details</h5>
-                    <p><strong>Price:</strong> ${{ product.price }}</p>
-                    <p><strong>Category:</strong> {{ product.category.name }}</p>
-                    <p><strong>Stock:</strong> {{ product.stock }}</p>
-                    <p><strong>SKU:</strong> {{ product.sku }}</p>
-                    <p><strong>Brand:</strong> {{ product.brand|default:"Not specified" }}</p>
-                    <p><strong>Status:</strong> 
-                        {% if product.status == 'active' %}
-                            <span class="badge badge-success">Active</span>
-                        {% elif product.status == 'inactive' %}
-                            <span class="badge badge-secondary">Inactive</span>
-                        {% else %}
-                            <span class="badge badge-danger">Out of Stock</span>
-                        {% endif %}
-                    </p>
-                    <p><strong>Featured:</strong> {% if product.featured %}Yes{% else %}No{% endif %}</p>
-                </div>
+          <h3>{{ product.name }}</h3>
+          
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <span class="badge bg-primary">{{ product.category.name }}</span>
+              {% if product.featured %}
+                <span class="badge bg-info ms-2">Featured</span>
+              {% endif %}
+              
+              {% if product.status == 'active' %}
+                <span class="badge bg-success ms-2">Active</span>
+              {% elif product.status == 'inactive' %}
+                <span class="badge bg-secondary ms-2">Inactive</span>
+              {% else %}
+                <span class="badge bg-danger ms-2">Out of Stock</span>
+              {% endif %}
             </div>
-            
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">Description</h5>
-                    <p>{{ product.description }}</p>
-                </div>
+            <h4 class="text-primary mb-0">${{ product.price }}</h4>
+          </div>
+          
+          <hr>
+          
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <p><strong>SKU:</strong> {{ product.sku }}</p>
+              <p><strong>Brand:</strong> {{ product.brand|default:"Not specified" }}</p>
             </div>
-            
-            {% if product.specifications.exists %}
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">Specifications</h5>
-                    <ul class="list-group list-group-flush">
-                        {% for spec in product.specifications.all %}
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>{{ spec.name }}</span>
-                            <span>{{ spec.value }}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+            <div class="col-md-6">
+              <p><strong>Stock:</strong> {{ product.stock }}</p>
+              <p><strong>Created:</strong> {{ product.created_at|date:"M d, Y" }}</p>
             </div>
-            {% endif %}
+          </div>
+          
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Description</h5>
+              <p>{{ product.description }}</p>
+            </div>
+          </div>
+          
+          {% if product.specifications.exists %}
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Specifications</h5>
+            </div>
+            <div class="card-body p-0">
+              <table class="table table-sm mb-0">
+                <tbody>
+                  {% for spec in product.specifications.all %}
+                  <tr>
+                    <th style="width: 40%;">{{ spec.name }}</th>
+                    <td>{{ spec.value }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {% endif %}
         </div>
-    </div>
+      </div>
 </div>
 {% endblock %}

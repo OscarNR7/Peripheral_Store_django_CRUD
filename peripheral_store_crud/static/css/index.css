@@ -1,0 +1,91 @@
+.dashboard-stats {
+    margin-bottom: 2rem;
+}
+.stats-card {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    border-color: #695CFE;
+}
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(105, 92, 254, 0.1);
+    color: #695CFE;
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+.stats-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+.stats-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+.card-title {
+    color: #343a40;
+    font-weight: 600;
+}
+.section-title {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: #343a40;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+.action-card {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+.action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    border-color: #695CFE;
+}
+.action-icon {
+    color: #695CFE;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+.btn-primary {
+    background-color: #695CFE;
+    border-color: #695CFE;
+}
+.btn-primary:hover {
+    background-color: #5a4fe6;
+    border-color: #5a4fe6;
+}
+.btn-success {
+    transition: all 0.3s ease;
+}
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+.recent-item {
+    border-left: 3px solid #695CFE;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+}
+.recent-item:hover {
+    background-color: rgba(105, 92, 254, 0.05);
+}
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+.pending-progress {

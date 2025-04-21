@@ -1,0 +1,141 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-10 px-4 sm:px-6 text-[#1e293b]" style="background-color: #2d3748;">
+    <div class="max-w-7xl mx-auto">
+        <!-- Breadcrumb -->
+        <nav class="mb-6">
+            <ol class="flex items-center space-x-2 text-sm">
+                <li><a href="{% url 'public_products:catalog_list' %}" class="text-cyan-500 hover:underline">Catalog</a></li>
+                <li>/</li>
+                <li class="text-white">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <!-- Product Container -->
+        <div class="bg-slate-800 text-white rounded-xl shadow-sm overflow-hidden">
+            <div class="md:flex">
+                <!-- Image Gallery -->
+                <div class="md:w-1/2 p-6">
+                    <!-- Main Image -->
+                    <div class="main-image mb-4 rounded-lg overflow-hidden bg-slate-800  flex items-center justify-center">
+                        {% with main_image=product.images.filter.first %}
+                        <img id="main-image" src="{{ main_image.image.url }}" alt="{{ product.name }}" 
+                             class="w-full h-auto max-h-96 object-contain">
+                        {% endwith %}
+                    </div>
+                    
+                    <!-- Thumbnails -->
+                    <div class="thumbnail-grid">
+                        {% for image in product.images.all %}
+                        <div class="thumbnail-item {% if forloop.first %}border-2 border-cyan-500{% endif %}" 
+                             onclick="changeMainImage('{{ image.image.url }}')">
+                            <img src="{{ image.image.url }}" alt="{{ product.name }}" 
+                                 class="w-full h-full object-cover cursor-pointer">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="md:w-1/2 p-6 border-t md:border-t-0 md:border-l border-gray-200">
+                    <h1 class="text-2xl font-bold text-white mb-2">{{ product.name }}</h1>
+                    
+                    <!-- Price -->
+                    <div class="mb-6">
+                        <span class="text-3xl font-bold text-white">${{ product.price }}</span>
+                    </div>
+
+                    <!-- Stock Status -->
+                    <div class="mb-6">
+                        {% if product.stock > 0 %}
+                        <p class="text-green-600 flex items-center">
+                            <i class='bx bx-check-circle mr-2'></i> In Stock
+                        </p>
+                        {% else %}
+                        <p class="text-red-600 flex items-center">
+                            <i class='bx bx-x-circle mr-2'></i> Out of Stock
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mb-8">
+                        <div class="flex items-center mb-4">
+                            <button class="bg-slate-700 px-3 py-1 rounded-l-lg">-</button>
+                            <input type="number" value="1" min="1" max="{{ product.stock }}" 
+                                   class="w-16 text-center bg-slate-600 py-1">
+                            <button class="bg-slate-700 px-3 py-1 rounded-r-lg">+</button>
+                        </div>
+                        <button class="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3 px-4 rounded-lg mb-2 transition-colors">
+                            Add to Cart
+                        </button>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <h3 class="font-bold text-lg mb-2">Description</h3>
+                        <p class="text-white mb-4">{{ product.description }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specifications -->
+            {% if product.specifications.exists %}
+            <div class="p-6 border-t border-gray-200">
+                <h3 class="text-xl font-bold mb-4">Product Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for spec in product.specifications.all %}
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-white">{{ spec.name }}</span>
+                        <span class="font-medium">{{ spec.value }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Related Products -->
+        <div class="mt-12">
+            <h3 class="text-xl text-white font-bold mb-6">You may also like</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {% for related in related_products %}
+                <a href="{% url 'products:public_product_detail' slug=related.slug %}" class="product-card">
+                    <div class="product-image-container">
+                        {% if related.images.exists %}
+                            <img src="{{ related.images.first.image.url }}" alt="{{ related.name }}" 
+                                 class="product-image" loading="lazy">
+                        {% else %}
+                            <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                                <i class='bx bx-image-alt text-4xl text-gray-400'></i>
+                            </div>
+                        {% endif %}
+                        <span class="price-tag">${{ related.price }}</span>
+                    </div>
+                    <div class="product-info">
+                        <h2 class="product-title">{{ related.name }}</h2>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function changeMainImage(imageUrl) {
+    document.getElementById('main-image').src = imageUrl;
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail-item').forEach(item => {
+        item.classList.remove('border-2', 'border-cyan-500');
+    });
+    event.currentTarget.classList.add('border-2', 'border-cyan-500');
+}
+</script>
+{% endblock %}

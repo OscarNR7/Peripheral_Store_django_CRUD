@@ -156,7 +156,6 @@
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Subtotal</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -164,17 +163,17 @@
                         <tr>
                             <td>{{ item.product.name }}</td>
                             <td>{{ item.product.sku }}</td>
-                            <td>${{ item.price|floatformat:2 }}</td>
+                            <td>${{ item.unit_price|floatformat:2 }}</td>
                             <td>{{ item.quantity }}</td>
-                            <td>${{ item.subtotal|floatformat:2 }}</td>
-                            <td>
+                            <td colspan="2">${{ order.subtotal|floatformat:2 }}</td>
+                            <!-- <td>
                                 <a href="{% url 'orders:order_item_update' order_number=order.order_number item_id=item.id %}" class="btn btn-sm btn-outline-primary me-1">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <a href="{% url 'orders:order_item_delete' order_number=order.order_number item_id=item.id %}" class="btn btn-sm btn-outline-danger">
                                     <i class="bi bi-trash"></i>
                                 </a>
-                            </td>
+                            </td> -->
                         </tr>
                         {% empty %}
                         <tr>
@@ -183,10 +182,6 @@
                         {% endfor %}
                     </tbody>
                     <tfoot>
-                        <tr>
-                            <td colspan="4" class="text-end"><strong>Subtotal:</strong></td>
-                            <td colspan="2">${{ order.subtotal|floatformat:2 }}</td>
-                        </tr>
                         <tr>
                             <td colspan="4" class="text-end"><strong>Shipping:</strong></td>
                             <td colspan="2">${{ order.shipping_cost|floatformat:2 }}</td>

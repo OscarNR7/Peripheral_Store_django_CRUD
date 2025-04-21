@@ -1,0 +1,93 @@
+{% load static %}
+<!-- Barra Lateral -->
+<nav class="sidebar">
+    <header>
+        <div class="image-text">
+            <span class="image">
+                <img src="{% static 'images/logo.svg' %}" alt="logo">
+            </span>
+            <div class="text header-text">
+                <span class="name">Peripheral Store</span>
+                <span class="profession">Admin Dashboard</span>
+            </div>
+        </div>
+        
+        <div class="toggle-container">
+            <i class='bx bx-chevron-right'></i>
+        </div>
+    </header>
+
+    <div class="menu-bar">
+        <div class="menu">
+            <ul class="menu-links">
+                <li class="nav-link">
+                    <a href="{% url 'public_products:catalog_list' %}">
+                        <i class='bx bxs-store-alt icon' ></i>
+                        <span class="text nav-text">Store</span>
+                    </a>
+                </li>
+                {% if user.is_authenticated and user.is_staff %}
+                <li class="nav-link">
+                    <a href="{% url 'dashboard:index' %}">
+                        <i class='bx bxs-dashboard icon'></i>
+                        <span class="text nav-text">Dashboard</span>
+                    </a>
+                </li>
+                {% endif %}
+                <li class="nav-link">
+                    <a href="{% url 'products:product_list' %}">
+                        <i class='bx bx-package icon'></i>
+                        <span class="text nav-text">Products</span>
+                    </a>
+                </li>
+                <li class="nav-link">
+                    <a href="{% url 'users:user_list' %}">
+                        <i class='bx bxs-user icon'></i>
+                        <span class="text nav-text">Users</span>
+                    </a>
+                </li>
+                <li class="nav-link">
+                    <a href="{% url 'categories:category_list' %}">
+                        <i class='bx bx-category-alt icon'></i>
+                        <span class="text nav-text">Categories</span>
+                    </a>
+                </li>
+                <li class="nav-link">
+                    <a href="{% url 'orders:order_dashboard' %}">
+                        <i class='bx bx-clipboard icon'></i>
+                        <span class="text nav-text">Orders</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="bottom-content">
+            <ul class="menu-links">
+                {% if user.is_authenticated %}
+                <li class="nav-link">
+                    <form method="post" action="{% url 'users:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-logout">
+                            <i class='bx bx-log-out icon'></i>
+                            <span class="text nav-text">Logout</span>
+                        </button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-link">
+                    <a href="{% url 'users:login' %}">
+                        <i class='bx bx-log-in icon'></i>
+                        <span class="text nav-text">Login</span>
+                    </a>
+                </li>
+                <li class="nav-link">
+                    <a href="{% url 'users:register' %}">
+                        <i class='bx bx-user-plus icon'></i>
+                        <span class="text nav-text">Register</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

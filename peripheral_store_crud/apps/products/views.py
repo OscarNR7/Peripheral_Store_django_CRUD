@@ -5,11 +5,55 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views import View
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import JsonResponse
 from .models import Product
 from .forms import ProductForm, ProductImageFormSet, ProductSpecificationFormSet
 from apps.users.models import User
+from apps.categories.models import Category
 
 # Create your views here.
+#catalogo de los productos
+class CatalogView(ListView):
+    model = Product
+    context_object_name = 'products'
+    template_name = 'product_catalog.html'
+    paginate_by = 12
+
+    def get_queryset(self):
+        queryset = Product.objects.filter(status='active')
+        q = self.request.GET.get('q')
+        category_id = self.request.GET.get('category')
+        if q:
+            queryset = queryset.filter(name__icontains=q)
+        
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()
+        context["query"] = self.request.GET.get("q", "")
+        context["selected_category"] = self.request.GET.get("category", "")
+        return context
+
+#vista publica de los productos individuales
+class PublicProductDetailView(DetailView):
+    model = Product
+    template_name = 'public_product_detail.html'
+    context_object_name = 'product'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status='active')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['related_products'] = Product.objects.filter(
+            category=self.object.category
+        ).exclude(id=self.object.id)[:5]
+        return context
 
 #clase que muestra los productos ingresados
 class ProductListView(ListView):
@@ -28,7 +72,7 @@ class ProductListView(ListView):
         
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['quey'] = self.request.GET.get('q','')
+        context['query'] = self.request.GET.get('q','')
         return context
 
 class ProductDetailView(DetailView):
@@ -124,3 +168,16 @@ class ProductDeleteView(DeleteView):
         product = self.get_object()
         messages.success(self.request,  f'Product {product.name} deleted successfully')
         return super().delete(request, *args, **kwargs)
+
+@api_view(['GET'])
+def get_product_details(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+        return JsonResponse({
+            'id': product.id,
+            'name': product.name,
+            'price': str(product.price),
+            'stock': product.stock
+        })
+    except Product.DoesNotExist:
+        return JsonResponse({'error': 'Product not found'}, status=404)

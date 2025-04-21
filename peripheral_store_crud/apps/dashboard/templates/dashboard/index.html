@@ -1,59 +1,314 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Admin Dashboard</h1>
-    
-    <div class="dashboard-menu">
-        <div class="row">
-            <!-- Products -->
-            <div class="col-md-3">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Products</h5>
-                        <p class="card-text">Manage all your products</p>
-                        <a href="{% url 'products:product_list' %}" class="btn btn-primary">View Products</a>
-                        <a href="{% url 'products:product_create' %}" class="btn btn-success">Create Product</a>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">Admin Dashboard</h1>
+        <span class="text-muted">Welcome back, Admin!</span>
+    </div>
+
+    <!-- Statistics Summary -->
+    <div class="row dashboard-stats">
+        <div class="col-md-3 mb-4">
+            <div class="card stats-card">
+                <div class="card-body text-center">
+                    <div class="stats-icon mx-auto">
+                        <i class='bx bxs-notepad'></i>
+                    </div>
+                    <div class="stats-value">{{ total_orders|default:'0' }}</div>
+                    <div class="stats-label">Total Orders</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card stats-card">
+                <div class="card-body text-center">
+                    <div class="stats-icon mx-auto">
+                        <i class='bx bxs-keyboard'></i>
+                    </div>
+                    <div class="stats-value">{{ total_products|default:'0' }}</div>
+                    <div class="stats-label">Products</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card stats-card">
+                <div class="card-body text-center">
+                    <div class="stats-icon mx-auto">
+                        <i class='bx bx-user' ></i>
+                    </div>
+                    <div class="stats-value">{{ total_users|default:'0' }}</div>
+                    <div class="stats-label">Users</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card stats-card">
+                <div class="card-body text-center">
+                    <div class="stats-icon mx-auto">
+                        <i class='bx bx-money-withdraw'></i>
+                    </div>
+                    <div class="stats-value">${{ total_revenue|default:'0' }}</div>
+                    <div class="stats-label">Revenue</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Quick Actions -->
+        <div class="col-lg-4 mb-4">
+            <h4 class="section-title">Quick Actions</h4>
+            <div class="row">
+                <!-- Products -->
+                <div class="col-6 mb-4">
+                    <div class="card action-card">
+                        <div class="card-body text-center">
+                            <div class="action-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <h5 class="card-title">Products</h5>
+                            <p class="card-text small">Manage all products</p>
+                            <div class="btn-group w-100">
+                                <a href="{% url 'products:product_list' %}" class="btn btn-sm btn-primary">View</a>
+                                <a href="{% url 'products:product_create' %}" class="btn btn-sm btn-success">Create</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Categories -->
+                <div class="col-6 mb-4">
+                    <div class="card action-card">
+                        <div class="card-body text-center">
+                            <div class="action-icon">
+                                <i class="fas fa-tags"></i>
+                            </div>
+                            <h5 class="card-title">Categories</h5>
+                            <p class="card-text small">Manage categories</p>
+                            <div class="btn-group w-100">
+                                <a href="{% url 'categories:category_list' %}" class="btn btn-sm btn-primary">View</a>
+                                <a href="{% url 'categories:category_create' %}" class="btn btn-sm btn-success">Create</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Users -->
+                <div class="col-6 mb-4">
+                    <div class="card action-card">
+                        <div class="card-body text-center">
+                            <div class="action-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h5 class="card-title">Users</h5>
+                            <p class="card-text small">Manage users</p>
+                            <div class="btn-group w-100">
+                                <a href="{% url 'users:user_list' %}" class="btn btn-sm btn-primary">View</a>
+                                <a href="{% url 'users:register' %}" class="btn btn-sm btn-success">Create</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Orders -->
+                <div class="col-6 mb-4">
+                    <div class="card action-card">
+                        <div class="card-body text-center">
+                            <div class="action-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <h5 class="card-title">Orders</h5>
+                            <p class="card-text small">Manage orders</p>
+                            <div class="btn-group w-100">
+                                <a href="{% url 'orders:order_list' %}" class="btn btn-sm btn-primary">View</a>
+                                <a href="#" class="btn btn-sm btn-secondary disabled">Details</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Categories -->
-            <div class="col-md-3">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Categories</h5>
-                        <p class="card-text">Manage product categories</p>
-                        <a href="{% url 'categories:category_list' %}" class="btn btn-primary">View Categories</a>
-                        <a href="{% url 'categories:category_create' %}" class="btn btn-success">Create Category</a>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="col-lg-4 mb-4">
+            <h4 class="section-title">Recent Orders</h4>
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% if latest_orders %}
+                            {% for order in latest_orders|slice:":5" %}
+                                <div class="list-group-item recent-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>Order #{{ order.order_number }}</strong>
+                                            <div class="small text-muted">{{ order.user.get_full_name }}</div>
+                                        </div>
+                                        <div>
+                                            <span class="badge rounded-pill 
+                                                {% if order.status == 'pending' %}bg-warning{% endif %}
+                                                {% if order.status == 'processing' %}bg-info{% endif %}
+                                                {% if order.status == 'shipped' %}bg-primary{% endif %}
+                                                {% if order.status == 'delivered' %}bg-success{% endif %}
+                                                {% if order.status == 'cancelled' %}bg-danger{% endif %}
+                                                status-badge">
+                                                {{ order.status|title }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <div class="small">${{ order.total }}</div>
+                                        <div class="small text-muted">{{ order.created_at|date:"M d, Y" }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="list-group-item text-center">
+                                <p class="mb-0">No recent orders found.</p>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
-            </div>
-            
-            <!-- Users -->
-            <div class="col-md-3">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Users</h5>
-                        <p class="card-text">Manage registered users</p>
-                        <a href="{% url 'users:user_list' %}" class="btn btn-primary">View Users</a>
-                        <a href="{% url 'users:register' %}" class="btn btn-success">Create User</a>
-                    </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'orders:order_list' %}" class="btn btn-sm btn-primary">View All Orders</a>
                 </div>
             </div>
-            
-            <!-- Orders -->
-            <div class="col-md-3">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Orders</h5>
-                        <p class="card-text">Manage customer orders</p>
-                        <!-- Update with real URL when ready -->
-                        <a href="#" class="btn btn-primary">View Orders</a>
+        </div>
+
+        <!-- Order Status -->
+        <div class="col-lg-4 mb-4">
+            <h4 class="section-title">Order Status</h4>
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span>Pending</span>
+                            <span class="badge bg-warning">{{ pending_orders|default:'0' }}</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ pending_percentage|default:'0' }}%"></div>
+                        </div>
                     </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span>Processing</span>
+                            <span class="badge bg-info">{{ processing_orders|default:'0' }}</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ processing_percentage|default:'0' }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span>Shipped</span>
+                            <span class="badge bg-primary">{{ shipped_orders|default:'0' }}</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ shipped_percentage|default:'0' }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span>Delivered</span>
+                            <span class="badge bg-success">{{ delivered_orders|default:'0' }}</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ delivered_percentage|default:'0' }}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span>Cancelled</span>
+                            <span class="badge bg-danger">{{ cancelled_orders|default:'0' }}</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ cancelled_percentage|default:'0' }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'orders:order_dashboard' %}" class="btn btn-sm btn-primary">View Order Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Statistics -->
+    <div class="row">
+        <!-- Low Stock Products -->
+        <div class="col-md-6 mb-4">
+            <h4 class="section-title">Low Stock Products</h4>
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% if low_stock_products %}
+                            {% for product in low_stock_products %}
+                                <div class="list-group-item recent-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ product.name }}</strong>
+                                            <div class="small text-muted">SKU: {{ product.sku }}</div>
+                                        </div>
+                                        <div>
+                                            <span class="badge rounded-pill bg-danger">Stock: {{ product.stock }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="list-group-item text-center">
+                                <p class="mb-0">No low stock products found.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'products:product_list' %}" class="btn btn-sm btn-primary">View All Products</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Latest Users -->
+        <div class="col-md-6 mb-4">
+            <h4 class="section-title">Latest Users</h4>
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% if latest_users %}
+                            {% for user in latest_users %}
+                                <div class="list-group-item recent-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ user.get_full_name }}</strong>
+                                            <div class="small text-muted">{{ user.email }}</div>
+                                        </div>
+                                        <div class="small text-muted">
+                                            {{ user.date_joined|date:"M d, Y" }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="list-group-item text-center">
+                                <p class="mb-0">No users found.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'users:user_list' %}" class="btn btn-sm btn-primary">View All Users</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 {% endblock %}

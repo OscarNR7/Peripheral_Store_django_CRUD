@@ -1,0 +1,102 @@
+{% load static %}
+<nav class="bg-slate-800 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <!-- Primera fila (logo, búsqueda, user y cart) -->
+        <div class="flex items-center py-3">
+            <!-- Logo -->
+            <a href="{% url 'public_products:catalog_list' %}" class="flex items-center gap-2 group">
+                <img src="{% static 'images/logo-white.png' %}" alt="logo" class="h-20 w-20 object-contain">
+                <span class="text-xl font-bold whitespace-nowrap">Peripheral Store</span>
+            </a>
+            
+
+            <!-- Barra de búsqueda -->
+            <div class="flex flex-1 mx-4 max-w-2xl">
+                <form method="get" action="{% url 'public_products:catalog_list' %}" class="flex w-full">
+                    <select name="category" class="bg-gray-100 text-black px-3 py-2 rounded-l-md border-r border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                        <option value="">All</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <input type="text" name="q" placeholder="Search products..."
+                           class="flex-1 px-4 py-2 text-black focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                           value="{{ request.GET.q }}">
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-r-md">
+                        <i class='bx bx-search'></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- User y Cart -->
+            <div class="flex items-center space-x-4 ml-auto">
+                <!-- User dropdown -->
+                <div class="relative ml-4">
+                    {% if user.is_authenticated %}
+                        <!-- Botón del dropdown -->
+                        <button id="profile-dropdown-btn" class="flex items-center space-x-1 focus:outline-none">
+                            <div class="w-8 h-8 rounded-full overflow-hidden bg-cyan-500 flex items-center justify-center">
+                                {% if user.profile and user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="w-full h-full object-cover">
+                                {% else %}
+                                    <i class='bx bx-user text-white'></i>
+                                {% endif %}
+                            </div>
+                            <span class="hidden md:inline text-sm font-medium">{{ user.first_name|default:user.username }}</span>
+                            <i class='bx bx-chevron-down text-sm'></i>
+                        </button>
+                        
+                        <!-- Contenido del dropdown -->
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-slate-700 rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                            <a href="{% url 'users:profile_detail' pk=user.pk %}" class="block px-4 py-2 text-sm text-white hover:bg-slate-800">
+                                <i class='bx bx-user mr-2'></i> My Profile
+                            </a>
+                            <a href="{% url 'dashboard:index' %}" class="block px-4 py-2 text-sm text-white hover:bg-slate-800">
+                                <i class='bx bxs-dashboard'></i> Admin Dashboard
+                            </a>
+                            <form method="post" action="{% url 'users:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full text-left block px-4 py-2 text-sm text-white hover:bg-slate-800">
+                                    <i class='bx bx-log-out mr-2'></i> Log Out
+                                </button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center space-x-2">
+                            <a href="{% url 'users:login' %}" class="text-sm hover:text-cyan-300 px-3 py-1 rounded">
+                                Login
+                            </a>
+                            <a href="{% url 'users:register' %}" class="text-sm bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-1 rounded">
+                                Register
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Cart -->
+                <a href="#" class="flex items-center hover:text-cyan-300 relative">
+                    <i class='bx bx-cart text-2xl'></i>
+                    <span class="absolute -top-2 -right-2 bg-cyan-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    <span class="hidden md:inline ml-1 text-sm font-medium">Cart</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Segunda fila (categorías) -->
+        <div class="flex items-center py-2 border-t border-slate-700">
+            <div class="flex space-x-4 text-sm">
+                <a href="#" class="hover:text-cyan-300 flex items-center">
+                    <i class='bx bx-menu mr-1'></i>
+                    <span>All Categories</span>
+                </a>
+                {% for category in categories|slice:":8" %}
+                    <a href="{% url 'public_products:catalog_list' %}?category={{ category.id }}" class="hover:text-cyan-300 hidden md:block">
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</nav>

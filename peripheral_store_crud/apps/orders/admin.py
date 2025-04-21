@@ -5,14 +5,21 @@ from .models import Order, OrderItem
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    extra = 0
-    model = OrderItem
-    extra = 0
-    readonly_fields = ['product', 'quantity', 'unit_price', 'total_price', 'created_at']
-    can_delete = False
+    extra = 1
+    autocomplete_fields = ['product']
+    fields = ['product', 'quantity', 'total_price']
+    readonly_fields = ['total_price']
     
-    def has_add_permission(self, request, obj=None):
-        return False
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        form = formset.form
+        
+        # Inicializa unit_price con el precio del producto cuando se selecciona
+        if 'product' in form.base_fields:
+            widget = form.base_fields['product'].widget
+            widget.attrs['onchange'] = 'setUnitPrice(this)'
+            
+        return formset
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -50,3 +57,26 @@ class OrderAdmin(admin.ModelAdmin):
         return format_html('<a href="{}">{}</a>', url, obj.user.get_full_name())
     
     user_info.short_description = 'Customer'
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        
+        for instance in instances:
+            if isinstance(instance, OrderItem):
+                # Si el producto está seleccionado pero no hay unit_price, 
+                # usar el precio del producto
+                if instance.product and not instance.unit_price:
+                    instance.unit_price = instance.product.price
+                
+                # Calcular el precio total
+                instance.total_price = instance.quantity * instance.unit_price
+                instance.save()
+        
+        for deleted_object in formset.deleted_objects:
+            deleted_object.delete()
+        
+        formset.save_m2m()
+        
+        # Recalcular totales del pedido
+        if form.instance:
+            form.instance.recalculate_totals()

@@ -1,0 +1,125 @@
+.table-wrapper {
+    background-color: var(--sidebar-color);
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .table {
+    color: var(--text-color);
+    margin-bottom: 0;
+  }
+  
+  .dark-theme .table {
+    color: var(--dark-text-color);
+  }
+  
+  .table thead {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .dark-theme .table thead {
+    background-color: var(--dark-primary-color);
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: var(--primary-color-light);
+  }
+  
+  .dark-theme .table-hover tbody tr:hover {
+    background-color: var(--dark-primary-color);
+  }
+  
+  .pagination {
+    margin-top: 20px;
+    justify-content: center;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .dark-theme .pagination .page-item.active .page-link {
+    background-color: var(--dark-primary-color);
+    border-color: var(--dark-primary-color);
+  }
+  
+  .pagination .page-link {
+    color: var(--primary-color);
+  }
+  
+  .dark-theme .pagination .page-link {
+    background-color: var(--dark-sidebar-color);
+    color: var(--dark-text-color);
+    border-color: var(--dark-primary-color);
+  }
+  
+  .badge {
+    font-size: 0.85em;
+    padding: 5px 10px;
+    border-radius: 20px;
+  }
+  
+  .btn-action {
+    padding: 0.25rem 0.5rem;
+    margin: 0 0.15rem;
+    border-radius: 4px;
+    transition: all 0.3s;
+  }
+  
+  .modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .dark-theme .modal-content {
+    background-color: var(--dark-sidebar-color);
+    color: var(--dark-text-color);
+  }
+  
+  .dark-theme .modal-header {
+    border-bottom: 1px solid var(--dark-primary-color);
+  }
+  
+  .dark-theme .modal-footer {
+    border-top: 1px solid var(--dark-primary-color);
+  }
+  
+  .search-container {
+    position: relative;
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 10px;
+    color: var(--text-color);
+  }
+  
+  .dark-theme .search-icon {
+    color: var(--dark-text-color);
+  }
+  
+  .search-input {
+    padding-left: 35px;
+    border-radius: 20px;
+    background-color: var(--sidebar-color);
+    border: 1px solid var(--toggle-color);
+    color: var(--text-color);
+  }
+  
+  .dark-theme .search-input {
+    background-color: var(--dark-sidebar-color);
+    border-color: var(--dark-primary-color);
+    color: var(--dark-text-color);
+  }
+  
+  .btn-create {
+    border-radius: 8px;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
