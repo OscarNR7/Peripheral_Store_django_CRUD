@@ -33,7 +33,7 @@
                         <span class="text nav-text">Dashboard</span>
                     </a>
                 </li>
-                {% endif %}
+               
                 <li class="nav-link">
                     <a href="{% url 'products:product_list' %}">
                         <i class='bx bx-package icon'></i>
@@ -58,9 +58,10 @@
                         <span class="text nav-text">Orders</span>
                     </a>
                 </li>
+                {% endif %}
             </ul>
         </div>
-
+        
         <div class="bottom-content">
             <ul class="menu-links">
                 {% if user.is_authenticated %}

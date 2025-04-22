@@ -1,35 +1,50 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.db import transaction
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView, DetailView, DeleteView
 from django.views import View
-from .models import Category, CategoryAttribute
+from .models import Category
 from .forms import CategoryForm, CategoryAttributeFormSet
 
 # Create your views here.
-class CategoryListView(ListView):
+class CategoryListView(LoginRequiredMixin,UserPassesTestMixin,ListView):
     model =Category
     template_name = 'category_list.html'
     context_object_name = 'categories'
     paginate_by = 10
 
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
+
     def get_queryset(self):
         return Category.objects.filter(parent=None)
     
-class CategoryDetailView(DetailView):
+class CategoryDetailView(LoginRequiredMixin,UserPassesTestMixin,DetailView):
     model = Category
     form_class = CategoryForm
     template_name = 'category_detail.html'
     context_object_name = 'category'
     
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['attributes'] = self.object.attributes.all()
         return context
 
-class CategoryCreateView(View):
+class CategoryCreateView(LoginRequiredMixin,UserPassesTestMixin,View):
     template_name = 'category_form.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def get(self, request):
         form = CategoryForm()
@@ -69,8 +84,14 @@ class CategoryCreateView(View):
             'attribute_formset' : attribute_formset
         })
     
-class CategoryUpdateView(View):
+class CategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,View):
     template_name = 'category_form.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
+
 
     def get(self, request, pk):
         category = get_object_or_404(Category, pk=pk)
@@ -117,11 +138,16 @@ class CategoryUpdateView(View):
         })
 
 
-class CategoryDeleteView(DeleteView):
+class CategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model = Category
     template_name = 'category_delete.html'
     success_url = reverse_lazy('categories:category_list')
     context_object_name = 'category'
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def delete(self, request, *args, **kwargs):
         messages.success(request, 'Category deleted successfully')

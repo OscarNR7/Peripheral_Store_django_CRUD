@@ -1,23 +1,24 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, View
-from django.contrib.admin.views.decorators import staff_member_required
-from django.utils.decorators import method_decorator
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.db.models import Q, Sum, Count
-from django.http import HttpResponseRedirect
-from django.utils import timezone
+from django.db.models import Q
 from .models import Order, OrderItem
 from .forms import OrderForm, OrderItemForm
-from apps.users.models import User, Address
-from apps.products.models import Product
+
 
 # Create your views here.
 
-class OrderDashboardView(View):
+class OrderDashboardView(LoginRequiredMixin,UserPassesTestMixin,View):
     '''Vista de las estadisticas de los pedidos'''
     template_name = 'order_dashboard.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def get(self,request,*args,**kwargs):
         total_orders = Order.objects.count()
@@ -35,12 +36,17 @@ class OrderDashboardView(View):
             'latest_orders': latest_orders,}
         return render(request, self.template_name, context)
     
-class OrderListView(ListView):
+class OrderListView(LoginRequiredMixin,UserPassesTestMixin,ListView):
     '''vista de la lista de pedidos'''
     model = Order
     template_name = 'order_list.html'
     context_object_name = 'orders'
     paginate_by = 15
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -65,13 +71,18 @@ class OrderListView(ListView):
         context['status'] = self.request.GET.get('status', '')
         return context
 
-class OrderDetailView(DetailView):
+class OrderDetailView(LoginRequiredMixin,UserPassesTestMixin,DetailView):
     '''vista individual de los pedidos'''
     model = Order
     context_object_name = 'order'
     template_name = 'order_detail.html'
     slug_field = 'order_number'
     slug_url_kwarg = 'order_number'
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -80,13 +91,18 @@ class OrderDetailView(DetailView):
         context['payment_status_choices'] = Order.PAYMENT_STATUS_CHOICES
         return context
     
-class OrderUpdateView(UpdateView):
+class OrderUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model = Order
     form_class = OrderForm
     template_name = 'order_form.html'
     slug_field = 'order_number'
     slug_url_kwarg = 'order_number'
 
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
+    
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.object.user
@@ -100,11 +116,16 @@ class OrderUpdateView(UpdateView):
     def get_success_url(self):
         return reverse('orders:order_detail', kwargs={'order_number': self.object.order_number})
     
-class OrderItemUpdateView(UpdateView):
+class OrderItemUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model = OrderItem
     form_class = OrderItemForm
     template_name = 'orderitem_form.html'
     pk_url_kwarg = 'item_id'
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def get_object(self, queryset=None):
         order_number = self.kwargs.get('order_number')
@@ -129,12 +150,17 @@ class OrderItemUpdateView(UpdateView):
         order_number = self.object.order.order_number
         return reverse('orders:order_detail', kwargs={'order_number': order_number})
     
-class OrderItemDeleteView(DeleteView):
+class OrderItemDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     """View para eliminar un item de pedido"""
     model = OrderItem
     template_name = 'orderitem_delete_confirm.html'
     success_url = reverse_lazy('orders:order_list')
     pk_url_kwarg = 'item_id'
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def get_object(self, queryset=None):
         order_number = self.kwargs.get('order_number')
@@ -158,9 +184,14 @@ class OrderItemDeleteView(DeleteView):
         messages.success(request, 'Order item deleted successfully.')
         return redirect('orders:order_detail', order_number=order.order_number)
 
-class OrderUpdateStatusView(View):
+class OrderUpdateStatusView(LoginRequiredMixin,UserPassesTestMixin,View):
     """Vista para actualizar rápidamente el estado del pedido"""
 
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
+    
     def post(self, request, order_number):
         order = get_object_or_404(Order, order_number=order_number)
         new_status = request.POST.get('status')
@@ -174,9 +205,14 @@ class OrderUpdateStatusView(View):
 
         return redirect('orders:order_list', order_number=order_number)
 
-class OrderUpdatePaymentStatusView(View):
+class OrderUpdatePaymentStatusView(LoginRequiredMixin,UserPassesTestMixin,View):
     """Vista para actualizar rápidamente el estado de pago"""
-
+    
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
+    
     def post(self, request, order_number):
         order = get_object_or_404(Order, order_number=order_number)
         new_status = request.POST.get('payment_status')

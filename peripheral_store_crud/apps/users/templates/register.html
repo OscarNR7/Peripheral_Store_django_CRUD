@@ -1,4 +1,5 @@
 {% extends "auth_base.html" %}
+{% load socialaccount %}
 
 {% block title %}User Registration{% endblock %}
 
@@ -26,6 +27,13 @@
             Register
         </button>
     </form>
+     <!-- Botón de registro con Google -->
+     <div class="text-center">
+        <a href="{% provider_login_url 'google' %}" class="inline-flex items-center justify-center w-full bg-white border border-gray-300 rounded-md py-2 px-4 text-gray-700 hover:bg-gray-50 transition-colors">
+            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="h-5 w-5 mr-2">
+            Sign up with Google
+        </a>
+    </div>
 
     <div class="mt-6 text-center text-sm text-gray-600">
         Already have an account? 

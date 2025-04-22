@@ -1,13 +1,19 @@
 from django.views.generic import TemplateView
-from django.db.models import Count, Sum, Q
-from django.utils import timezone
-from datetime import timedelta
+from django.db.models import Sum
+from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from apps.orders.models import Order
 from apps.products.models import Product
 from apps.users.models import User
 
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin,UserPassesTestMixin,TemplateView):
     template_name = 'dashboard/index.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
+    
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,6 +1,5 @@
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -125,7 +124,7 @@ class UserUpdateView(View):
             'user_obj': user_obj
         })
     
-class UserListView(ListView):
+class UserListView(LoginRequiredMixin,UserPassesTestMixin,ListView):
     '''
     Vista de la list de usurios
     '''
@@ -133,6 +132,11 @@ class UserListView(ListView):
     template_name = 'user_list.html'
     context_object_name = 'users'
     paginate_by = 10
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -161,16 +165,15 @@ class UserListView(ListView):
         context['query'] = self.request.GET.get('q', '')
         return context
 
-        
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect('users:login')
         if not request.user.is_staff:
             messages.error(request, "You don't have permission to access this page")
-            return redirect('users:profile_detail', pk=request.user.pk)
+            return redirect('public_products:catalog_list')
         return super().dispatch(request, *args, **kwargs)
     
-class UserDeleteView(DeleteView):
+class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin,DeleteView):
     '''
     Vista para eliminar un usuario- Solo administradores o el propio usuario pueden hacerlo
     '''
@@ -178,13 +181,18 @@ class UserDeleteView(DeleteView):
     template_name = 'user_delete.html'
     success_url = reverse_lazy('users:user_list')
 
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
+
     def delete(self, request, *args, **kwargs):
         user_obj = self.get_object()
         messages.success(request, f'Usuario {user_obj.email} eliminado correctamente.')
         return super().delete(request, *args, **kwargs)
 
 #Address management
-class SetDefaultAddressView(View):
+class SetDefaultAddressView(LoginRequiredMixin,View):
     """
     Vista para establecer una dirección como predeterminada
     """

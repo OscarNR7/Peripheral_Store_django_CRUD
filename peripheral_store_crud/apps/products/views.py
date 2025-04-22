@@ -1,17 +1,13 @@
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
-from django.db.models import Avg
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import ListView,DeleteView, DetailView
 from django.views import View
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
 from django.http import JsonResponse
 from .models import Product
 from .forms import ProductForm, ProductImageFormSet, ProductSpecificationFormSet
-from apps.users.models import User
 from apps.categories.models import Category
 
 # Create your views here.
@@ -56,11 +52,17 @@ class PublicProductDetailView(DetailView):
         return context
 
 #clase que muestra los productos ingresados
-class ProductListView(ListView):
+class ProductListView(LoginRequiredMixin,UserPassesTestMixin,ListView):
     model = Product
     context_object_name = "products"
     paginate_by = 5
     template_name = "product_list.html"
+
+    def test_func(self):
+        return self.request.user.is_staff
+    
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -75,15 +77,25 @@ class ProductListView(ListView):
         context['query'] = self.request.GET.get('q','')
         return context
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin,UserPassesTestMixin,DetailView):
     model = Product
     context_object_name = "product"
     template_name = "product_detail.html"
     success_url = reverse_lazy('products:product_list')
 
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
+
 #CRUD
-class ProductCreateView(View):
+class ProductCreateView(LoginRequiredMixin,UserPassesTestMixin ,View):
     template_name = "product_form.html"
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def get(self, request):
         form = ProductForm()
@@ -121,8 +133,13 @@ class ProductCreateView(View):
             'spec_formset': spec_formset
         })
 
-class ProductUpdateView(View):
+class ProductUpdateView(LoginRequiredMixin,UserPassesTestMixin,View):
     template_name = "product_form.html"
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def get(self,request, slug):
         product = get_object_or_404(Product, slug=slug)
@@ -159,10 +176,15 @@ class ProductUpdateView(View):
             'product': product
         })
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin,UserPassesTestMixin ,DeleteView):
     model = Product
     template_name = "product_delete.html"
     success_url = reverse_lazy('products:product_list')
+
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('public_products:catalog_list')
 
     def delete (self, request, *args, **kwargs):
         product = self.get_object()
