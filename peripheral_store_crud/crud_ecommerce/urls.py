@@ -31,7 +31,6 @@ urlpatterns = [
     path('dashboard/products/', include('apps.products.urls')),
     path('dashboard/orders/', include('apps.orders.urls', namespace='orders')),
     path('home/', include(('apps.products.public_urls', 'public_products'), namespace='public_products')),
-    path('accounts/', include('allauth.urls')),
 ]
 
 

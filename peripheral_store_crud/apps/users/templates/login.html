@@ -1,5 +1,4 @@
 {% extends "auth_base.html" %}
-{% load socialaccount %}
 
 {% block title %}Login{% endblock %}
 
@@ -23,13 +22,6 @@
             Login
         </button>
     </form>
-    <div class="mt-4 text-center">
-        <p class="text-gray-600 mb-2">Or sign in with:</p>
-        <a href="{% provider_login_url 'google' %}" class="inline-block bg-white border border-gray-300 rounded-md py-2 px-4 text-gray-700 hover:bg-gray-50 transition-colors">
-            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="inline-block h-5 w-5 mr-2">
-            Sign in with Google
-        </a>
-    </div>
     <div class="mt-6 text-center text-sm text-gray-600">
         Don't have an account? 
         <a href="{% url 'users:register' %}" class="text-cyan-500 hover:underline">Sign up here</a>
