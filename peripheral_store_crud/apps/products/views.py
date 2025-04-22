@@ -83,7 +83,7 @@ class ProductDetailView(DetailView):
 
 #CRUD
 class ProductCreateView(View):
-    template_name = "product_create.html"
+    template_name = "product_form.html"
 
     def get(self, request):
         form = ProductForm()
@@ -122,7 +122,7 @@ class ProductCreateView(View):
         })
 
 class ProductUpdateView(View):
-    template_name = "product_update.html"
+    template_name = "product_form.html"
 
     def get(self,request, slug):
         product = get_object_or_404(Product, slug=slug)

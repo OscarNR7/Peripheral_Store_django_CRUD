@@ -135,7 +135,33 @@ class UserListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return User.objects.filter(is_active=True)
+        queryset = super().get_queryset()
+
+        #filtro por nombre
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(first_name__icontains=query)
+        status = self.request.GET.get('status')
+        if status == 'active':
+            queryset = queryset.filter(is_active=True)
+        elif status == 'inactive':
+            queryset = queryset.filter(is_active=False)
+        
+        # Filtro por role
+        role = self.request.GET.get('role')
+        if role == 'staff':
+            queryset = queryset.filter(is_staff=True)
+        elif role == 'customer':
+            queryset = queryset.filter(is_staff=False)
+            
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q', '')
+        return context
+
+        
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect('users:login')

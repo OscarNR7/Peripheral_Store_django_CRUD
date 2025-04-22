@@ -1,0 +1,113 @@
+.profile-header {
+    border-radius: 10px;
+    padding: 2rem;
+  }
+  
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  
+  .profile-avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    color: white;
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 5px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  
+  .profile-stats .card {
+    transition: transform 0.2s;
+  }
+  
+  .profile-stats .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .tab-content {
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 0.25rem 0.25rem;
+  }
+  
+  .address-card {
+    height: 100%;
+    transition: all 0.3s;
+  }
+  
+  .address-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+  
+  .address-type-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .nav-tabs .nav-link {
+    font-weight: 500;
+  }
+  
+  .nav-tabs .nav-link.active {
+    border-bottom: 3px solid #0d6efd;
+  }
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+  color: var(--bs-nav-tabs-link-active-color);
+  background-color: rgb(15 23 42);
+  border-color: var(--bs-nav-tabs-link-active-border-color);
+}
+
+  
+  .activity-timeline {
+    position: relative;
+    padding-left: 36px;
+  }
+  
+  .activity-timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background-color: #dee2e6;
+  }
+  
+  .activity-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+  }
+  
+  .activity-icon {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    left: -36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 2px solid #dee2e6;
+    z-index: 2;
+  }
+  
+  .activity-content {
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+  }

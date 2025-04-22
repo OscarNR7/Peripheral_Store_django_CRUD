@@ -133,6 +133,7 @@ class OrderItemDeleteView(DeleteView):
     """View para eliminar un item de pedido"""
     model = OrderItem
     template_name = 'orderitem_delete_confirm.html'
+    success_url = reverse_lazy('orders:order_list')
     pk_url_kwarg = 'item_id'
 
     def get_object(self, queryset=None):

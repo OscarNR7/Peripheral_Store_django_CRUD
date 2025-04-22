@@ -1,42 +1,230 @@
-{% extends "base.html" %}
+{% extends "home.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}Update Profile{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/profile_update.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-header bg-primary text-white">
-          <h3 class="card-title mb-0">Update Profile</h3>
-        </div>
-        <div class="card-body">
-          <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <div class="row">
-              <div class="col-md-6">
-                <h5>Account Information</h5>
-                <hr>
-                {{ user_form|crispy }}
+<div class="breadcrumb-container bg-slate-700">
+  <div class="container">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb py-2 mb-0">
+              <li class="breadcrumb-item text-white"><a href="{% url 'public_products:catalog_list' %}">Home</a></li>
+              {% block breadcrumbs %}
+              {% endblock breadcrumbs %}
+          </ol>
+      </nav>
+  </div>
+</div>
+<div class="container mt-4">
+  <div class="card shadow-sm ">
+    <div class="card-header bg-primary text-white">
+      <h3 class="card-title mb-0">Update Profile</h3>
+    </div>
+    <div class="card-body">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+      
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        
+        <div class="row">
+          <!-- Left Column: User Info -->
+          <div class="col-lg-7 order-lg-1 order-2">
+            <!-- Account Information -->
+            <div class="form-section">
+              <div class="form-section-title">
+                <i class="bx bx-user"></i>
+                <h4 class="mb-0">Account Information</h4>
               </div>
               
-              <div class="col-md-6">
-                <h5>Personal Information</h5>
-                <hr>
-                {{ profile_form|crispy }}
+              <div class="row">
+                <div class="col-md-6">
+                  {{ user_form.first_name|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                  {{ user_form.last_name|as_crispy_field }}
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  {{ user_form.email|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                  {{ user_form.phone_number|as_crispy_field }}
+                </div>
               </div>
             </div>
             
-            <div class="text-center mt-4">
-              <button type="submit" class="btn btn-primary">Save Changes</button>
-              <a href="{% url 'users:profile_detail' pk=user_obj.pk %}" class="btn btn-secondary ml-2">Cancel</a>
+            <!-- Personal Information -->
+            <div class="form-section">
+              <div class="form-section-title">
+                <i class="bx bx-id-card"></i>
+                <h4 class="mb-0">Personal Information</h4>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  {{ profile_form.date_of_birth|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                  {{ profile_form.gender|as_crispy_field }}
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-12">
+                  {{ profile_form.bio|as_crispy_field }}
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-check">
+                    {{ profile_form.newsletter_subscription }}
+                    <label class="form-check-label" for="{{ profile_form.newsletter_subscription.id_for_label }}">
+                      Subscribe to our newsletter for promotions and updates
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
-          </form>
+          </div>
+          
+          <!-- Right Column: Avatar -->
+          <div class="col-lg-5 order-lg-2 order-1 mb-4 mb-lg-0">
+            <div class="form-section text-center">
+              <div class="form-section-title">
+                <i class="bx bx-image"></i>
+                <h4 class="mb-0">Profile Picture</h4>
+              </div>
+              
+              <div class="avatar-upload">
+                <div class="avatar-preview" id="avatarPreview">
+                  {% if user_obj.profile and user_obj.profile.avatar %}
+                    <img src="{{ user_obj.profile.avatar.url }}" alt="Current avatar" id="avatarImage">
+                  {% else %}
+                    <div class="avatar-placeholder">
+                      {{ user_obj.first_name|first }}{{ user_obj.last_name|first }}
+                    </div>
+                  {% endif %}
+                </div>
+              
+                <div class="avatar-edit mt-3">
+                  <label class="custom-file-upload">
+                    <input type="file" name="{{ profile_form.avatar.name }}">
+                    <i class="bx bx-upload me-2"></i> Upload new photo
+                  </label>
+              
+                  {% if user_obj.profile and user_obj.profile.avatar %}
+                    <button type="button" class="btn btn-link text-danger mt-2" id="removeAvatar">
+                      <i class="bx bx-trash me-1"></i> Remove photo
+                    </button>
+                  {% endif %}
+                </div>
+              
+                <small class="text-muted d-block mt-2">Max 2MB, JPG or PNG only</small>
+              </div>
+              
+            
+            <!-- Additional info or tips can go here -->
+            <div class="card mt-3 bg-light border-0">
+              <div class="card-body">
+                <h5><i class="bx bx-info-circle me-2 text-primary"></i> Profile Tips</h5>
+                <ul class="mb-0">
+                  <li>Keep your contact information up to date</li>
+                  <li>A complete profile helps us serve you better</li>
+                  <li>Your personal data is protected by our privacy policy</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+        
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-center gap-2 mt-4">
+          <button type="submit" class="btn btn-primary">
+            <i class="bx bx-save me-1"></i> Save Changes
+          </button>
+          <a href="{% url 'users:profile_detail' pk=user_obj.pk %}" class="btn btn-secondary">
+            <i class="bx bx-x me-1"></i> Cancel
+          <!-- {% if request.user.is_staff %}
+            <a href="{% url 'users:user_list' %}" class="btn btn-secondary">
+              <i class="bx bx-x me-1"></i> Cancel
+          {% else %}
+            
+          {% endif %} -->
+          </a>
+        </div>
+      </form>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Preview uploaded avatar
+    const avatarInput = document.querySelector('input[type="file"]');
+    const avatarPreview = document.getElementById('avatarPreview');
+    
+    if (avatarInput) {
+      avatarInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          const reader = new FileReader();
+          
+          reader.onload = function(e) {
+            let img = avatarPreview.querySelector('img');
+            
+            if (!img) {
+              img = document.createElement('img');
+              avatarPreview.innerHTML = '';
+              avatarPreview.appendChild(img);
+            }
+            
+            img.src = e.target.result;
+            img.id = 'avatarImage';
+          }
+          
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+    }
+    
+    // Remove avatar button
+    const removeAvatarBtn = document.getElementById('removeAvatar');
+    if (removeAvatarBtn) {
+      removeAvatarBtn.addEventListener('click', function() {
+        const avatarInput = document.querySelector('input[type="file"]');
+        avatarInput.value = '';
+        
+        // Create a placeholder instead of the image
+        const placeholder = document.createElement('div');
+        placeholder.className = 'avatar-placeholder';
+        placeholder.textContent = '{{ user_obj.first_name|first }}{{ user_obj.last_name|first }}';
+        
+        const avatarPreview = document.getElementById('avatarPreview');
+        avatarPreview.innerHTML = '';
+        avatarPreview.appendChild(placeholder);
+        
+        // Create a hidden input to signal deletion
+        const deleteInput = document.createElement('input');
+        deleteInput.type = 'hidden';
+        deleteInput.name = 'delete_avatar';
+        deleteInput.value = 'true';
+        document.querySelector('form').appendChild(deleteInput);
+      });
+    }
+  });
+</script>
 {% endblock %}

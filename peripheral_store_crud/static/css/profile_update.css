@@ -1,0 +1,105 @@
+.avatar-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .avatar-preview {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #339abc, #2C334E) border-box;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .avatar-preview:hover {
+    transform: scale(1.05);
+  }
+  
+  .avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #fff;
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    font-weight: 500;
+  }
+  
+  .custom-file-upload {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #339abc;
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+  
+  .custom-file-upload:hover {
+    background: #287b94;
+  }
+  
+  .custom-file-upload input[type="file"] {
+    display: none;
+  }
+  
+    
+    .avatar-edit {
+      text-align: center;
+    }
+    
+    .btn-file {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-file input[type=file] {
+      position: ;
+      top: 0;
+      right: 0;
+      min-width: 100%;
+      min-height: 100%;
+      font-size: 100px;
+      text-align: right;
+      filter: alpha(opacity=0);
+      opacity: 0;
+      outline: none;
+      background: white;
+      cursor: inherit;
+      display: block;
+    }
+    
+    .form-section {
+      padding: 20px;
+      border-radius: 5px;
+      background-color: #f8f9fa;
+      margin-bottom: 20px;
+    }
+    
+    .form-section-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .form-section-title i {
+      font-size: 1.5rem;
+      margin-right: 10px;
+      color: #0d6efd;
+    }

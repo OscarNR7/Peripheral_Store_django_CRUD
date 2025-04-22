@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if product %}Edit{% else %}Create{% endif %} Product | Peripheral Store{% endblock %}
+
+{% block extra_head %}
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="{% static 'css/product_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container product-form-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="{% url 'products:product_list' %}" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Form Header -->
+            <div class="product-form-header">
+                <div>
+                    <h1 class="h2 mb-0">{% if product %}Edit{% else %}Create New{% endif %} Product</h1>
+                    <p class="text-light mb-0">{% if product %}Update product details{% else %}Add a new product to your inventory{% endif %}</p>
+                </div>
+                <i class='bx bx-package' style="font-size: 2.5rem;"></i>
+            </div>
+            
+            <!-- Form Card -->
+            <div class="card product-form-card">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Tabs -->
+                        <div class="product-form-tabs">
+                            <ul class="nav nav-tabs mb-4" id="productTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                                        <i class='bx bx-info-circle'></i> Basic Information
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="images-tab" data-bs-toggle="tab" data-bs-target="#images" type="button" role="tab">
+                                        <i class='bx bx-image'></i> Images
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab">
+                                        <i class='bx bx-list-ul'></i> Specifications
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="productTabContent">
+                                <!-- Tab: Basic Information -->
+                                <div class="tab-pane fade show active" id="info" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.name.id_for_label }}">
+                                                    <i class='bx bx-tag'></i> Name
+                                                </label>
+                                                {{ form.name }}
+                                                {% if form.name.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.name.errors %}
+                                                    {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.category.id_for_label }}">
+                                                    <i class='bx bx-category'></i> Category
+                                                </label>
+                                                {{ form.category }}
+                                                {% if form.category.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.category.errors %}
+                                                    {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="{{ form.price.id_for_label }}">
+                                                    <i class='bx bx-dollar'></i> Price
+                                                </label>
+                                                {{ form.price }}
+                                                {% if form.price.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.price.errors %}
+                                                    {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="{{ form.stock.id_for_label }}">
+                                                    <i class='bx bx-box'></i> Stock
+                                                </label>
+                                                {{ form.stock }}
+                                                {% if form.stock.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.stock.errors %}
+                                                    {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="{{ form.sku.id_for_label }}">
+                                                    <i class='bx bx-barcode'></i> SKU
+                                                </label>
+                                                {{ form.sku }}
+                                                {% if form.sku.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.sku.errors %}
+                                                    {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.brand.id_for_label }}">
+                                                    <i class='bx bx-certification'></i> Brand
+                                                </label>
+                                                {{ form.brand }}
+                                                {% if form.brand.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.brand.errors %}
+                                                    {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.status.id_for_label }}">
+                                                    <i class='bx bx-check-circle'></i> Status
+                                                </label>
+                                                {{ form.status }}
+                                                {% if form.status.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.status.errors %}
+                                                    {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="{{ form.description.id_for_label }}">
+                                            <i class='bx bx-text'></i> Description
+                                        </label>
+                                        {{ form.description }}
+                                        {% if form.description.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.description.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="custom-control custom-switch mt-3">
+                                        {{ form.featured }}
+                                        <label class="custom-control-label" for="{{ form.featured.id_for_label }}">
+                                            <i class='bx bx-star'></i> Feature this product
+                                        </label>
+                                        {% if form.featured.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.featured.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Tab: Images -->
+                                <div class="tab-pane fade" id="images" role="tabpanel">
+                                    {{ image_formset.management_form }}
+                                    <div class="image-container">
+                                        {% for form in image_formset %}
+                                        <div class="card mb-3 image-form">
+                                            <div class="card-body">
+                                                {% if form.instance.pk and form.instance.image %}
+                                                <div class="mb-3 text-center">
+                                                    <img src="{{ form.instance.image.url }}" alt="{{ form.instance.alt_text }}" class="img-thumbnail image-preview">
+                                                </div>
+                                                {% endif %}
+
+                                                {{ form.id }}
+                                                {% if form.instance.pk %}{{ form.DELETE }}{% endif %}
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label><i class='bx bx-image-add'></i> Image</label>
+                                                            {{ form.image }}
+                                                            {% if form.image.errors %}
+                                                            <div class="text-danger small mt-1">{{ form.image.errors }}</div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label><i class='bx bx-comment-detail'></i> Alt Text</label>
+                                                            {{ form.alt_text }}
+                                                            {% if form.alt_text.errors %}
+                                                            <div class="text-danger small mt-1">{{ form.alt_text.errors }}</div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="custom-control custom-switch">
+                                                    {{ form.is_main }}
+                                                    <label class="custom-control-label" for="{{ form.is_main.id_for_label }}">
+                                                        <i class='bx bx-flag'></i> Set as main product image
+                                                    </label>
+                                                    {% if form.is_main.errors %}
+                                                    <div class="text-danger small mt-1">{{ form.is_main.errors }}</div>
+                                                    {% endif %}
+                                                </div>
+
+                                                {% if form.instance.pk %}
+                                                <div class="custom-control custom-switch mt-2 text-danger">
+                                                    <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}" class="custom-control-input delete-checkbox">
+                                                    <label class="custom-control-label" for="{{ form.DELETE.id_for_label }}">
+                                                        <i class='bx bx-trash'></i> Delete this image
+                                                    </label>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <!-- Empty Image Form Template -->
+                                    <div id="empty-image-form" class="d-none">
+                                        <div class="card mb-3 image-form">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label><i class='bx bx-image-add'></i> Image</label>
+                                                            <input type="file" name="images-__prefix__-image" id="id_images-__prefix__-image" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label><i class='bx bx-comment-detail'></i> Alt Text</label>
+                                                            <input type="text" name="images-__prefix__-alt_text" id="id_images-__prefix__-alt_text" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" name="images-__prefix__-is_main" id="id_images-__prefix__-is_main" class="custom-control-input">
+                                                    <label class="custom-control-label" for="id_images-__prefix__-is_main">
+                                                        <i class='bx bx-flag'></i> Set as main product image
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" class="btn btn-outline-primary" id="add-image">
+                                        <i class='bx bx-plus-circle'></i> Add another image
+                                    </button>
+                                </div>
+
+                                <!-- Tab: Specifications -->
+                                <div class="tab-pane fade" id="specs" role="tabpanel">
+                                    {{ spec_formset.management_form }}
+                                    <div id="spec-formset">
+                                        {% for form in spec_formset %}
+                                        <div class="card mb-3 spec-form">
+                                            <div class="card-body">
+                                                {{ form.id }}
+                                                {% if form.instance.pk %}{{ form.DELETE }}{% endif %}
+
+                                                <div class="row">
+                                                    <div class="col-md-5">
+                                                        <div class="form-group">
+                                                            <label><i class='bx bx-detail'></i> Specification Name</label>
+                                                            {{ form.name }}
+                                                            {% if form.name.errors %}
+                                                            <div class="text-danger small mt-1">{{ form.name.errors }}</div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <div class="form-group">
+                                                            <label><i class='bx bx-data'></i> Specification Value</label>
+                                                            {{ form.value }}
+                                                            {% if form.value.errors %}
+                                                            <div class="text-danger small mt-1">{{ form.value.errors }}</div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        {% if form.instance.pk %}
+                                                        <div class="custom-control custom-switch mt-4 text-danger">
+                                                            <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}" class="custom-control-input delete-checkbox">
+                                                            <label class="custom-control-label" for="{{ form.DELETE.id_for_label }}">
+                                                                <i class='bx bx-trash'></i> Delete
+                                                            </label>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <button type="button" class="btn btn-outline-primary" id="add-spec">
+                                        <i class='bx bx-plus-circle'></i> Add another specification
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4 d-flex justify-content-between">
+                            <a href="{% url 'products:product_list' %}" class="btn btn-secondary">
+                                <i class='bx bx-arrow-back'></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class='bx bx-save'></i> Save Product
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4 product-form-sidebar">
+            <!-- Quick Tips -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class='bx bx-bulb'></i> {% if product %}Update{% else %}Creation{% endif %} Tips</h5>
+                </div>
+                <div class="card-body">
+                    <div class="tip-card">
+                        <div class="d-flex">
+                            <div class="mr-3">
+                                <i class='bx bx-image text-primary' style="font-size: 24px;"></i>
+                            </div>
+                            <div>
+                                <h6>High-Quality Images</h6>
+                                <p class="mb-0 small">Use clear, well-lit images from multiple angles to showcase your product.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if product %}
+                    <div class="tip-card">
+                        <div class="d-flex">
+                            <div class="mr-3">
+                                <i class='bx bx-history text-info' style="font-size: 24px;"></i>
+                            </div>
+                            <div>
+                                <h6>Update History</h6>
+                                <p class="mb-0 small">Consider keeping a changelog for significant product updates.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="tip-card">
+                        <div class="d-flex">
+                            <div class="mr-3">
+                                <i class='bx bx-list-ul text-success' style="font-size: 24px;"></i>
+                            </div>
+                            <div>
+                                <h6>Complete Specifications</h6>
+                                <p class="mb-0 small">Add all technical specifications to help customers make informed decisions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Stats (solo para edición) -->
+            {% if product %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class='bx bx-stats'></i> Product Stats</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Created</span>
+                            <span>{{ product.created_at|date:"M d, Y" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Last Updated</span>
+                            <span>{{ product.updated_at|date:"M d, Y" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Views</span>
+                            <span>{{ product.views|default:"0" }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Featured Products Info -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class='bx bx-info-circle'></i> Did you know?</h5>
+                </div>
+                <div class="card-body">
+                    <div class="feature-card mb-3">
+                        <h6><i class='bx bx-star text-warning'></i> Featured Products</h6>
+                        <p class="small mb-0">Featured products appear prominently on the home page and can increase visibility by up to 40%.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h6><i class='bx bx-image text-info'></i> Multiple Images</h6>
+                        <p class="small mb-0">Products with multiple images have 35% higher conversion rates than those with a single image.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/product_form.js' %}"></script>
+{% endblock %}

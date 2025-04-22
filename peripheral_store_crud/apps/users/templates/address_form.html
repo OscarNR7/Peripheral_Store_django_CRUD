@@ -1,17 +1,84 @@
-{% extends 'base.html' %}
+{% extends "home.html" %}
 {% load static %}
 
-{% block title %}
-    {% if form.instance.id %}Edit Address{% else %}Add Address{% endif %}
+{% block title %}{% if form.instance.id %}Edit Address{% else %}Add Address{% endif %}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    .form-control {
+        border-radius: 0.375rem;
+        padding: 0.75rem;
+        border: 1px solid #dee2e6;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    .required-field::after {
+        content: "*";
+        color: #dc3545;
+        margin-left: 4px;
+    }
+    .card {
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 0.5rem;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eaecef;
+        padding: 1.25rem 1.5rem;
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .address-form-icon {
+        color: #6c757d;
+        width: 16px;
+        margin-right: 8px;
+    }
+    .input-group-text {
+        background-color: #f8f9fa;
+    }
+    .btn-primary {
+        padding: 0.75rem 1.5rem;
+    }
+    .address-type-selector {
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #eaecef;
+        padding-bottom: 1.5rem;
+    }
+    .main-content {
+        padding: 2rem;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
+<div class="breadcrumb-container bg-slate-700">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb py-2 mb-0">
+                <li class="breadcrumb-item text-white"><a href="{% url 'public_products:catalog_list' %}">Home</a></li>
+                {% block breadcrumbs %}
+                {% endblock breadcrumbs %}
+            </ol>
+        </nav>
+    </div>
+  </div>
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-lg-8 col-md-10">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>
                         {% if form.instance.id %}
                             Edit Address
                         {% else %}
@@ -31,11 +98,21 @@
                             </div>
                         {% endif %}
                         
-                        <div class="mb-3">
-                            <label for="{{ form.address_type.id_for_label }}" class="form-label">{{ form.address_type.label }}</label>
-                            {{ form.address_type }}
+                        <div class="address-type-selector">
+                            <label for="{{ form.address_type.id_for_label }}" class="form-label required-field">Address Type</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="address_type" id="address_type_billing" value="billing" {% if form.address_type.value == "billing" %}checked{% endif %}>
+                                <label class="btn btn-outline-primary" for="address_type_billing">
+                                    <i class="fas fa-file-invoice me-2"></i>Billing Address
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="address_type" id="address_type_shipping" value="shipping" {% if form.address_type.value == "shipping" %}checked{% endif %}>
+                                <label class="btn btn-outline-primary" for="address_type_shipping">
+                                    <i class="fas fa-shipping-fast me-2"></i>Shipping Address
+                                </label>
+                            </div>
                             {% if form.address_type.errors %}
-                                <div class="text-danger small">
+                                <div class="text-danger small mt-1">
                                     {% for error in form.address_type.errors %}
                                         {{ error }}
                                     {% endfor %}
@@ -43,11 +120,14 @@
                             {% endif %}
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
-                            {{ form.name }}
+                        <div class="mb-4">
+                            <label for="{{ form.name.id_for_label }}" class="form-label required-field">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" name="name" id="{{ form.name.id_for_label }}" class="form-control" placeholder="Full name" value="{{ form.name.value|default:'' }}" required>
+                            </div>
                             {% if form.name.errors %}
-                                <div class="text-danger small">
+                                <div class="text-danger small mt-1">
                                     {% for error in form.name.errors %}
                                         {{ error }}
                                     {% endfor %}
@@ -55,11 +135,14 @@
                             {% endif %}
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="{{ form.street_address1.id_for_label }}" class="form-label">{{ form.street_address1.label }}</label>
-                            {{ form.street_address1 }}
+                        <div class="mb-4">
+                            <label for="{{ form.street_address1.id_for_label }}" class="form-label required-field">Street Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                <input type="text" name="street_address1" id="{{ form.street_address1.id_for_label }}" class="form-control" placeholder="Street Address 1" value="{{ form.street_address1.value|default:'' }}" required>
+                            </div>
                             {% if form.street_address1.errors %}
-                                <div class="text-danger small">
+                                <div class="text-danger small mt-1">
                                     {% for error in form.street_address1.errors %}
                                         {{ error }}
                                     {% endfor %}
@@ -67,11 +150,13 @@
                             {% endif %}
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="{{ form.street_address2.id_for_label }}" class="form-label">{{ form.street_address2.label }}</label>
-                            {{ form.street_address2 }}
+                        <div class="mb-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-home" style="opacity: 0.5;"></i></span>
+                                <input type="text" name="street_address2" id="{{ form.street_address2.id_for_label }}" class="form-control" placeholder="Apartment, suite, unit, building, floor, etc. (optional)" value="{{ form.street_address2.value|default:'' }}">
+                            </div>
                             {% if form.street_address2.errors %}
-                                <div class="text-danger small">
+                                <div class="text-danger small mt-1">
                                     {% for error in form.street_address2.errors %}
                                         {{ error }}
                                     {% endfor %}
@@ -79,12 +164,15 @@
                             {% endif %}
                         </div>
                         
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.city.id_for_label }}" class="form-label">{{ form.city.label }}</label>
-                                {{ form.city }}
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="{{ form.city.id_for_label }}" class="form-label required-field">City</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-city"></i></span>
+                                    <input type="text" name="city" id="{{ form.city.id_for_label }}" class="form-control" placeholder="City" value="{{ form.city.value|default:'' }}" required>
+                                </div>
                                 {% if form.city.errors %}
-                                    <div class="text-danger small">
+                                    <div class="text-danger small mt-1">
                                         {% for error in form.city.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -92,11 +180,14 @@
                                 {% endif %}
                             </div>
                             
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.state_province.id_for_label }}" class="form-label">{{ form.state_province.label }}</label>
-                                {{ form.state_province }}
+                            <div class="col-md-6">
+                                <label for="{{ form.state_province.id_for_label }}" class="form-label required-field">State/Province</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-map"></i></span>
+                                    <input type="text" name="state_province" id="{{ form.state_province.id_for_label }}" class="form-control" placeholder="State/Province" value="{{ form.state_province.value|default:'' }}" required>
+                                </div>
                                 {% if form.state_province.errors %}
-                                    <div class="text-danger small">
+                                    <div class="text-danger small mt-1">
                                         {% for error in form.state_province.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -105,12 +196,15 @@
                             </div>
                         </div>
                         
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.postal_code.id_for_label }}" class="form-label">{{ form.postal_code.label }}</label>
-                                {{ form.postal_code }}
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="{{ form.postal_code.id_for_label }}" class="form-label required-field">Postal Code</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-mail-bulk"></i></span>
+                                    <input type="text" name="postal_code" id="{{ form.postal_code.id_for_label }}" class="form-control" placeholder="Postal code" value="{{ form.postal_code.value|default:'' }}" required>
+                                </div>
                                 {% if form.postal_code.errors %}
-                                    <div class="text-danger small">
+                                    <div class="text-danger small mt-1">
                                         {% for error in form.postal_code.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -118,11 +212,14 @@
                                 {% endif %}
                             </div>
                             
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.country.id_for_label }}" class="form-label">{{ form.country.label }}</label>
-                                {{ form.country }}
+                            <div class="col-md-6">
+                                <label for="{{ form.country.id_for_label }}" class="form-label required-field">Country</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                    <input type="text" name="country" id="{{ form.country.id_for_label }}" class="form-control" placeholder="Country" value="{{ form.country.value|default:'' }}" required>
+                                </div>
                                 {% if form.country.errors %}
-                                    <div class="text-danger small">
+                                    <div class="text-danger small mt-1">
                                         {% for error in form.country.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -131,11 +228,14 @@
                             </div>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="{{ form.phone.id_for_label }}" class="form-label">{{ form.phone.label }}</label>
-                            {{ form.phone }}
+                        <div class="mb-4">
+                            <label for="{{ form.phone.id_for_label }}" class="form-label required-field">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input type="tel" name="phone" id="{{ form.phone.id_for_label }}" class="form-control" placeholder="Phone number" value="{{ form.phone.value|default:'' }}" required>
+                            </div>
                             {% if form.phone.errors %}
-                                <div class="text-danger small">
+                                <div class="text-danger small mt-1">
                                     {% for error in form.phone.errors %}
                                         {{ error }}
                                     {% endfor %}
@@ -143,23 +243,42 @@
                             {% endif %}
                         </div>
                         
-                        <div class="mb-3 form-check">
-                            {{ form.is_default }}
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" name="is_default" id="{{ form.is_default.id_for_label }}" {% if form.is_default.value %}checked{% endif %}>
                             <label class="form-check-label" for="{{ form.is_default.id_for_label }}">
-                                Set as default address
+                                <i class="fas fa-star me-1 text-warning"></i> Set as default address
                             </label>
+                            <small class="d-block text-muted mt-1">This will be used as your default address for future orders.</small>
                         </div>
                         
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'users:address_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <div class="d-flex justify-content-between mt-4 pt-2">
+                            <a href="{% url 'users:address_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
                             <button type="submit" class="btn btn-primary">
-                                {% if form.instance.id %}Update{% else %}Save{% endif %}
+                                {% if form.instance.id %}
+                                    <i class="fas fa-save me-2"></i>Update Address
+                                {% else %}
+                                    <i class="fas fa-plus-circle me-2"></i>Save Address
+                                {% endif %}
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
+            
+            <!-- Help text -->
+            <div class="card mt-4">
+                <div class="card-body bg-light">
+                    <h5><i class="fas fa-info-circle me-2 text-primary"></i>Address Information</h5>
+                    <p class="mb-0">Please provide complete and accurate address information to ensure proper delivery of your orders. Fields marked with an asterisk (*) are required.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- No se necesita JS adicional en este template -->
 {% endblock %}

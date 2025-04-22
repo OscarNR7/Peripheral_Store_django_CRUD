@@ -123,3 +123,6 @@
     align-items: center;
     gap: 8px;
   }
+  body:not(.modal-open) .modal-backdrop {
+    display: none !important;
+}

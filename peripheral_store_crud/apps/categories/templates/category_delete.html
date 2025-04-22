@@ -5,13 +5,11 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col-md-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'categories:category_list' %}">Categories</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'categories:category_detail' category.pk %}">{{ category.name }}</a></li>
-                <li class="breadcrumb-item active">Delete</li>
-            </ol>
-        </nav>
+        <div>
+            <a href="{% url 'categories:category_list' %}" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
         <h1>Delete Category</h1>
     </div>
 </div>

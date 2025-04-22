@@ -1,137 +1,472 @@
-{% extends "base.html" %}
+{% extends "home.html" %}
+{% load static %}
 
-{% block title %}Profile of {{ user.first_name }}{% endblock %}
+{% block title %}{{ user.get_full_name }} Profile{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-header bg-primary text-white">
-          <h3 class="card-title mb-0">{{ user.first_name }}'s Profile</h3>
-        </div>
-        <div class="card-body">
-          <div class="text-center mb-4">
-            {% if profile and profile.avatar %}
-              <img src="{{ profile.avatar.url }}" alt="Avatar" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px;">
-            {% else %}
-              <img src="https://via.placeholder.com/150" alt="Default Avatar" class="rounded-circle img-thumbnail">
-            {% endif %}
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <h5>Account Information</h5>
-              <hr>
-              <p><strong>Username:</strong> {{ user.first_name }}</p>
-              <p><strong>Email:</strong> {{ user.email }}</p>
-              <p><strong>Registration Date:</strong> {{ user.date_joined|date:"d/m/Y" }}</p>
-            </div>
-            
-            <div class="col-md-6">
-              <h5>Personal Information</h5>
-              <hr>
-              {% if profile %}
-                <p><strong>First Name:</strong> {{ user.first_name|default:"Not specified" }}</p>
-                <p><strong>Last Name:</strong> {{ user.last_name|default:"Not specified" }}</p>
-                <p><strong>Phone:</strong> {{ user.phone_number|default:"Not specified" }}</p>
-                <p><strong>Address:</strong> {{ user.address|default:"Not specified" }}</p>
-              {% else %}
-                <p>No profile information available.</p>
-              {% endif %}
-            </div>
-          </div>
-          
-          <div class="mt-4 text-center">
-            <a href="{% url 'users:profile_update' pk=user.pk %}" class="btn btn-primary">Edit Profile</a>
-            <!-- {% if user.is_staff or request.user == user %}
-              <a href="{% url 'users:user_delete' pk=user.pk %}" class="btn btn-danger ml-2">Delete Account</a>
-            {% endif %} -->
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="breadcrumb-container bg-slate-700">
+  <div class="container">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb py-2 mb-0">
+              <li class="breadcrumb-item text-white"><a href="{% url 'public_products:catalog_list' %}">Home</a></li>
+              {% block breadcrumbs %}
+              {% endblock breadcrumbs %}
+          </ol>
+      </nav>
   </div>
 </div>
 
 <div class="container mt-4">
-  <div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">My Addresses</h5>
-      <a href="{% url 'users:address_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
-    </div>
-    <div class="card-body">
-      {% if has_addresses %}
-        <div class="row">
-          <!-- Billing Address -->
-          <div class="col-md-6 mb-3">
-            <h6>Billing Address</h6>
-            {% if default_billing %}
-              <div class="card">
-                <div class="card-body py-2 px-3">
-                  <p class="mb-1"><strong>{{ default_billing.name }}</strong></p>
-                  <p class="mb-1">{{ default_billing.street_address1 }}</p>
-                  {% if default_billing.street_address2 %}
-                    <p class="mb-1">{{ default_billing.street_address2 }}</p>
-                  {% endif %}
-                  <p class="mb-1">
-                    {{ default_billing.city }}, 
-                    {{ default_billing.state_province }} 
-                    {{ default_billing.postal_code }}
-                  </p>
-                  <p class="mb-0">{{ default_billing.country }}</p>
-                  <p class="mt-2 mb-0 text-muted small">
-                    Phone: {{ default_billing.phone }}
-                  </p>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted">No default billing address</p>
-              <a href="{% url 'users:address_create' %}?type=billing" 
-                 class="btn btn-sm btn-outline-secondary">
-                Add Billing Address
-              </a>
-            {% endif %}
+  <!-- Profile Header -->
+  <div class="profile-header mb-4 shadow-sm bg-slate-900 text-white">
+    <div class="row align-items-center">
+      <div class="col-md-2 text-center">
+        {% if profile and profile.avatar %}
+          <img src="{{ profile.avatar.url }}" class="profile-avatar" alt="{{ user.get_full_name }}">
+        {% else %}
+          <div class="profile-avatar-placeholder">
+            {{ user.first_name|first }}{{ user.last_name|first }}
           </div>
-
-          <!-- Shipping Address -->
-          <div class="col-md-6 mb-3">
-            <h6>Shipping Address</h6>
-            {% if default_shipping %}
-              <div class="card">
-                <div class="card-body py-2 px-3">
-                  <p class="mb-1"><strong>{{ default_shipping.name }}</strong></p>
-                  <p class="mb-1">{{ default_shipping.street_address1 }}</p>
-                  {% if default_shipping.street_address2 %}
-                    <p class="mb-1">{{ default_shipping.street_address2 }}</p>
-                  {% endif %}
-                  <p class="mb-1">
-                    {{ default_shipping.city }}, 
-                    {{ default_shipping.state_province }} 
-                    {{ default_shipping.postal_code }}
-                  </p>
-                  <p class="mb-0">{{ default_shipping.country }}</p>
-                  <p class="mt-2 mb-0 text-muted small">
-                    Phone: {{ default_shipping.phone }}
-                  </p>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted">No default shipping address</p>
-              <a href="{% url 'users:address_create' %}?type=shipping" 
-                 class="btn btn-sm btn-outline-secondary">
-                Add Shipping Address
-              </a>
-            {% endif %}
-          </div>
+        {% endif %}
+      </div>
+      <div class="col-md-7">
+        <h2 class="mb-1">{{ user.get_full_name }}</h2>
+        <p class="text-white mb-2">{{ user.email }}</p>
+        <div class="d-flex align-items-center mb-3">
+          {% if user.is_staff %}
+            <span class="badge bg-primary me-2">Staff</span>
+          {% else %}
+            <span class="badge bg-secondary me-2">Customer</span>
+          {% endif %}
+          
+          {% if user.is_active %}
+            <span class="badge bg-success me-2">Active Account</span>
+          {% else %}
+            <span class="badge bg-danger me-2">Inactive Account</span>
+          {% endif %}
+          
+          {% if user.is_verified %}
+            <span class="badge bg-info me-2">Verified</span>
+          {% endif %}
         </div>
-      {% else %}
-        <p class="text-muted">You haven't added any addresses yet</p>
-        <a href="{% url 'users:address_create' %}" class="btn btn-outline-primary">
-          Add First Address
-        </a>
-      {% endif %}
+        {% if profile and profile.bio %}
+          <p class="mb-0">{{ profile.bio|truncatewords:30 }}</p>
+        {% endif %}
+      </div>
+      <div class="col-md-3 text-md-end">
+        <div class="d-flex flex-column gap-2">
+          <a href="{% url 'users:profile_update' pk=user.pk %}" class="btn btn-primary">
+            <i class="bx bx-edit"></i> Edit Profile
+          </a>
+          {% if request.user.is_staff %}
+            <button type="button" class="btn btn-danger">
+              <i class="bx bx-trash"></i>
+              <a href="{% url 'users:user_delete' pk=user.pk %}">Delete User</a>
+            </button>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
+  
+  <!-- Profile Stats (for admin view) -->
+  {% if request.user.is_staff %}
+    <div class="profile-stats mb-4 ">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <div class="card bg-slate-900 border-0 shadow-sm ">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="icon-bg bg-info bg-opacity-25 rounded p-3 me-3">
+                  <i class="bx bx-map fs-3 text-info"></i>
+                </div>
+                <div>
+                  <h6 class="card-subtitle text-white mb-1">Saved Addresses</h6>
+                  <h3 class="card-title mb-0 text-white">{{ user.addresses.count }}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-slate-900 border-0 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="icon-bg bg-warning bg-opacity-25 rounded p-3 me-3">
+                  <i class="bx bx-time fs-3 text-warning"></i>
+                </div>
+                <div>
+                  <h6 class="card-subtitle text-white mb-1">Last Login</h6>
+                  <p class="card-text mb-0 text-white">{{ user.last_login|date:"M d, Y H:i" }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-0" id="profileTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active text-white" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">
+        <i class="bx bx-user-pin me-1"></i> Personal Details
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link text-white" id="addresses-tab" data-bs-toggle="tab" data-bs-target="#addresses" type="button" role="tab" aria-controls="addresses" aria-selected="false">
+        <i class="bx bx-map me-1"></i> Addresses <span class="badge bg-secondary rounded-pill ms-1">{{ user.addresses.count }}</span>
+      </button>
+    </li>
+    {% if request.user.is_staff %}
+    <li class="nav-item" role="presentation">
+      <button class="nav-link text-white" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="false">
+        <i class="bx bx-history me-1"></i> Activity
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link text-white" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="false">
+        <i class="bx bx-cart me-1"></i> Orders
+      </button>
+    </li>
+    {% endif %}
+  </ul>
+  
+  <!-- Tab Content -->
+  <div class="tab-content bg-slate-900 shadow-sm mb-4" id="profileTabsContent">
+    <!-- Personal Details Tab -->
+    <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+      <div class="row">
+        <div class="col-lg-6 ">
+          <div class="card border-0 h-100 ">
+            <div class="card-header">
+              <h5 class="card-title mb-0">Account Information</h5>
+            </div>
+            <div class="card-body">
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <th width="35%" class="ps-0">Full Name:</th>
+                    <td>{{ user.get_full_name }}</td>
+                  </tr>
+                  <tr>
+                    <th class="ps-0">Email:</th>
+                    <td>{{ user.email }}</td>
+                  </tr>
+                  <tr>
+                    <th class="ps-0">Phone:</th>
+                    <td>{{ user.phone_number|default:"Not provided" }}</td>
+                  </tr>
+                  <tr>
+                    <th class="ps-0">Account Status:</th>
+                    <td>
+                      {% if user.is_active %}
+                        <span class="badge bg-success">Active</span>
+                      {% else %}
+                        <span class="badge bg-danger">Inactive</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="ps-0">Email Verification:</th>
+                    <td>
+                      {% if user.is_verified %}
+                        <span class="badge bg-success">Verified</span>
+                      {% else %}
+                        <span class="badge bg-warning text-dark">Not Verified</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="ps-0">Date Joined:</th>
+                    <td>{{ user.date_joined|date:"F d, Y" }}</td>
+                  </tr>
+                  <tr>
+                    <th class="ps-0">Last Login:</th>
+                    <td>{{ user.last_login|date:"F d, Y H:i" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-6">
+          <div class="card border-0 h-100">
+            <div class="card-header bg-light">
+              <h5 class="card-title mb-0">Personal Information</h5>
+            </div>
+            <div class="card-body">
+              {% if profile %}
+                <table class="table table-borderless">
+                  <tbody>
+                    {% if profile.date_of_birth %}
+                    <tr>
+                      <th width="35%" class="ps-0">Date of Birth:</th>
+                      <td>{{ profile.date_of_birth|date:"F d, Y" }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if profile.gender %}
+                    <tr>
+                      <th class="ps-0">Gender:</th>
+                      <td>{{ profile.get_gender_display }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                      <th class="ps-0">Newsletter:</th>
+                      <td>
+                        {% if profile.newsletter_subscription %}
+                          <span class="badge bg-primary">Subscribed</span>
+                        {% else %}
+                          <span class="badge bg-secondary">Not Subscribed</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% if profile.bio %}
+                    <tr>
+                      <th class="ps-0">Bio:</th>
+                      <td>{{ profile.bio }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                      <th class="ps-0">Profile Created:</th>
+                      <td>{{ profile.created_at|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                      <th class="ps-0">Last Updated:</th>
+                      <td>{{ profile.updated_at|date:"F d, Y H:i" }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              {% else %}
+                <div class="text-center py-4">
+                  <i class="bx bx-user-x fs-1 text-muted"></i>
+                  <p class="mt-2">Profile information not available</p>
+                  <a href="{% url 'users:profile_update' pk=user.pk %}" class="btn btn-primary btn-sm mt-2">
+                    Complete Profile
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Addresses Tab -->
+    <div class="tab-pane fade" id="addresses" role="tabpanel" aria-labelledby="addresses-tab">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 text-white">Saved Addresses</h5>
+        <a href="{% url 'users:address_create' %}" class="btn btn-sm btn-primary">
+          <i class="bx bx-plus"></i> Add New Address
+        </a>
+        <a href="{% url 'users:address_list' %}" class="btn btn-sm btn-primary">
+          <i class="bx bx-map"></i> My Addresses
+        </a>
+      </div>
+      {% if has_addresses %}
+        <div class="row g-3">
+          {% for address in user.addresses.all %}
+            <div class="col-md-6">
+              <div class="card address-card position-relative">
+                <div class="card-body">
+                  <span class="address-type-badge badge bg-info">{{ address.get_address_type_display }}</span>
+                  
+                  {% if address.is_default %}
+                    <div class="ribbon ribbon-top-right">
+                      <span class="bg-success">Default</span>
+                    </div>
+                  {% endif %}
+                  
+                  <h6 class="card-title">{{ address.name }}</h6>
+                  <address class="mb-3">
+                    {{ address.street_address1 }}<br>
+                    {% if address.street_address2 %}{{ address.street_address2 }}<br>{% endif %}
+                    {{ address.city }}, {{ address.state_province }} {{ address.postal_code }}<br>
+                    {{ address.country }}<br>
+                    <i class="bx bx-phone me-1"></i> {{ address.phone }}
+                  </address>
+                  
+                  <div class="d-flex mt-3">
+                    {% if not address.is_default %}
+                      <form method="post" action="{% url 'users:set_default_address' pk=address.pk %}" class="me-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-success">Set as Default</button>
+                      </form>
+                    {% endif %}
+                    <a href="{% url 'users:address_update' pk=address.pk %}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                    <a href="{% url 'users:address_delete' pk=address.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-5">
+          <i class="bx bx-map-alt fs-1 text-muted"></i>
+          <p class="mt-2">No addresses saved yet</p>
+          <a href="{% url 'users:address_create' %}" class="btn btn-primary mt-2">
+            Add Your First Address
+          </a>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- Activity Tab -->
+    {% if request.user.is_staff %}
+    <div class="tab-pane fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+      <h5 class="mb-3 text-white">Recent Activity</h5>
+      
+      <div class="activity-timeline">
+        <!-- Sample activities - in a real implementation these would come from a user activity log model -->
+        <div class="activity-item">
+          <div class="activity-icon bg-primary text-white">
+            <i class="bx bx-log-in-circle"></i>
+          </div>
+          <div class="activity-content">
+            <div class="d-flex justify-content-between mb-1">
+              <strong>Login</strong>
+              <small class="text-muted">{{ user.last_login|date:"M d, Y H:i" }}</small>
+            </div>
+            <div>User logged in from IP 192.168.1.1</div>
+          </div>
+        </div>
+        
+        <div class="activity-item">
+          <div class="activity-icon bg-warning text-white">
+            <i class="bx bx-edit"></i>
+          </div>
+          <div class="activity-content">
+            <div class="d-flex justify-content-between mb-1">
+              <strong>Profile Updated</strong>
+              <small class="text-muted">{{ profile.updated_at|date:"M d, Y H:i" }}</small>
+            </div>
+            <div>Updated personal information</div>
+          </div>
+        </div>
+        
+        <div class="activity-item">
+          <div class="activity-icon bg-success text-white">
+            <i class="bx bx-cart"></i>
+          </div>
+          <div class="activity-content">
+            <div class="d-flex justify-content-between mb-1">
+              <strong>Order Placed</strong>
+              <small class="text-muted">April 15, 2025 14:30</small>
+            </div>
+            <div>Order #12345 for $156.78</div>
+          </div>
+        </div>
+        
+        <div class="activity-item">
+          <div class="activity-icon bg-info text-white">
+            <i class="bx bx-map"></i>
+          </div>
+          <div class="activity-content">
+            <div class="d-flex justify-content-between mb-1">
+              <strong>Address Added</strong>
+              <small class="text-muted">April 10, 2025 09:15</small>
+            </div>
+            <div>Added new shipping address</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Orders Tab -->
+    <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 text-white">Order History</h5>
+        <div>
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            Filter by Status
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">All Orders</a></li>
+            <li><a class="dropdown-item" href="#">Completed</a></li>
+            <li><a class="dropdown-item" href="#">Processing</a></li>
+            <li><a class="dropdown-item" href="#">Cancelled</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Sample orders - in a real implementation these would come from order models -->
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Total</th>
+              <th>Items</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#12345</td>
+              <td>April 15, 2025</td>
+              <td><span class="badge bg-success">Completed</span></td>
+              <td>$156.78</td>
+              <td>3 items</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary">View</button>
+              </td>
+            </tr>
+            <tr>
+              <td>#12332</td>
+              <td>April 10, 2025</td>
+              <td><span class="badge bg-info">Processing</span></td>
+              <td>$89.50</td>
+              <td>1 item</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary">View</button>
+              </td>
+            </tr>
+            <tr>
+              <td>#12301</td>
+              <td>April 2, 2025</td>
+              <td><span class="badge bg-secondary">Delivered</span></td>
+              <td>$245.99</td>
+              <td>4 items</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary">View</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  
+  <!-- Delete User Modal
+  {% if request.user.is_staff %}
+  <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Confirm User Deletion</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this user account? This action cannot be undone.</p>
+          <p class="mb-0"><strong>User:</strong> {{ user.get_full_name }} ({{ user.email }})</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="{% url 'users:user_delete' pk=user.pk %}" class="btn btn-danger">Delete User</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %} -->
 </div>
 {% endblock %}

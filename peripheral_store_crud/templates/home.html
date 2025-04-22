@@ -8,6 +8,8 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -43,7 +45,7 @@
     {% include "includes/navbar.html" %}
 
     <!-- Contenido Principal -->
-    <main class="min-h-screen"> <!-- Ajustado el padding-top para la navbar de dos filas -->
+    <main class="min-h-screen bg-slate-800"> <!-- Ajustado el padding-top para la navbar de dos filas -->
         {% block content %}{% endblock %}
     </main>
 
@@ -57,6 +59,7 @@
     </footer>
 
     <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/navbar.js' %}"></script>
     <script src="{% static 'js/dropdown.js' %}"></script>
 </body>

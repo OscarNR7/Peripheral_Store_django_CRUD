@@ -106,7 +106,7 @@
             <h3 class="text-xl text-white font-bold mb-6">You may also like</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {% for related in related_products %}
-                <a href="{% url 'products:public_product_detail' slug=related.slug %}" class="product-card">
+                <a href="{% url 'public_products:public_product_detail' slug=related.slug %}" class="product-card">
                     <div class="product-image-container">
                         {% if related.images.exists %}
                             <img src="{{ related.images.first.image.url }}" alt="{{ related.name }}" 

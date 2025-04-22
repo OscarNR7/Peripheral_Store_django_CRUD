@@ -156,6 +156,7 @@
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Subtotal</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -165,15 +166,12 @@
                             <td>{{ item.product.sku }}</td>
                             <td>${{ item.unit_price|floatformat:2 }}</td>
                             <td>{{ item.quantity }}</td>
-                            <td colspan="2">${{ order.subtotal|floatformat:2 }}</td>
-                            <!-- <td>
-                                <a href="{% url 'orders:order_item_update' order_number=order.order_number item_id=item.id %}" class="btn btn-sm btn-outline-primary me-1">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
+                            <td>${{ order.subtotal|floatformat:2 }}</td>
+                            <td>
                                 <a href="{% url 'orders:order_item_delete' order_number=order.order_number item_id=item.id %}" class="btn btn-sm btn-outline-danger">
-                                    <i class="bi bi-trash"></i>
+                                    <i class="bx bx-trash"></i>
                                 </a>
-                            </td> -->
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>

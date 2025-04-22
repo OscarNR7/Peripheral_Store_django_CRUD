@@ -1,69 +1,333 @@
 {% extends "base.html" %}
 
-{% block title %}{{ category.name }} - Details{% endblock %}
+{% block title %}{{ category.name }} - Category Details{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+        border-radius: 8px;
+        margin-bottom: 24px;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        padding: 15px 20px;
+    }
+    .detail-list dt {
+        font-weight: 500;
+        color: #495057;
+    }
+    .detail-list dd {
+        margin-bottom: 12px;
+    }
+    .category-path {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+    .stats-card {
+        background-color: #f8f9fa;
+        padding: 16px;
+        border-radius: 8px;
+        text-align: center;
+        height: 100%;
+    }
+    .stats-value {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #495057;
+    }
+    .stats-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .attr-tag {
+        background-color: #f1f3f5;
+        color: #495057;
+        border: 1px solid #dee2e6;
+        border-radius: 16px;
+        padding: 4px 12px;
+        display: inline-block;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    .attr-tag i {
+        margin-right: 4px;
+        color: #6c757d;
+    }
+    .attr-tag.required {
+        background-color: #fff3cd;
+        color: #856404;
+        border-color: #ffeeba;
+    }
+    .attr-tag.filterable {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border-color: #bee5eb;
+    }
+    .breadcrumb {
+        background-color: transparent;
+        padding-left: 0;
+    }
+    .btn-action {
+        padding: 8px 16px;
+    }
+    .category-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .status-badge {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
+<div class="row">
     <div class="col-md-8">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'categories:category_list' %}">Categories</a></li>
+                {% if category.parent %}
+                <li class="breadcrumb-item"><a href="{% url 'categories:category_detail' category.parent.pk %}">{{ category.parent.name }}</a></li>
+                {% endif %}
                 <li class="breadcrumb-item active">{{ category.name }}</li>
             </ol>
         </nav>
-        <h1>{{ category.name }}</h1>
+        <h1 class="mb-1">{{ category.name }}</h1>
+        <div class="category-path mb-3">
+            {% if category.parent %}
+            <i class="bi bi-diagram-3"></i> {{ category.parent.name }} &gt; {{ category.name }}
+            {% else %}
+            <i class="bi bi-folder"></i> Root Category
+            {% endif %}
+        </div>
     </div>
     <div class="col-md-4 text-end">
-        <div class="btn-group">
-            <a href="{% url 'categories:category_update' category.pk %}" class="btn btn-primary">
-                Edit
-            </a>
-            <a href="{% url 'categories:category_delete' category.pk %}" class="btn btn-danger">
-                Delete
-            </a>
+        <div class="d-flex flex-column flex-md-row justify-content-end align-items-center">
+            <div class="mb-2 mb-md-0 me-md-3">
+                <span class="badge status-badge {% if category.is_active %}bg-success{% else %}bg-secondary{% endif %} me-2">
+                    {% if category.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+                {% if category.featured %}
+                <span class="badge status-badge bg-primary">Featured</span>
+                {% endif %}
+            </div>
+            <div class="btn-group">
+                <a href="{% url 'categories:category_update' category.pk %}" class="btn btn-primary btn-action">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+                <a href="{% url 'categories:category_delete' category.pk %}" class="btn btn-danger btn-action">
+                    <i class="bi bi-trash"></i> Delete
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">Category Information</h5>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <dl>
-                    <dt>Name:</dt>
-                    <dd>{{ category.name }}</dd>
-
-                    {% if category.parent %}
-                    <dt>Parent Category:</dt>
-                    <dd>
-                        <a href="{% url 'categories:category_detail' category.parent.pk %}">
-                            {{ category.parent.name }}
-                        </a>
-                    </dd>
-                    {% endif %}
-                </dl>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Category Information</h5>
+                <span class="text-muted small">ID: {{ category.pk }}</span>
             </div>
-            <div class="col-md-6">
-                <dt>Description:</dt>
-                <dd>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="detail-list">
+                            <dt>Name:</dt>
+                            <dd>{{ category.name }}</dd>
+
+                            <dt>Slug:</dt>
+                            <dd>{{ category.slug }}</dd>
+
+                            {% if category.parent %}
+                            <dt>Parent Category:</dt>
+                            <dd>
+                                <a href="{% url 'categories:category_detail' category.parent.pk %}">
+                                    {{ category.parent.name }}
+                                </a>
+                            </dd>
+                            {% endif %}
+                            
+                            <dt>Status:</dt>
+                            <dd>
+                                {% if category.is_active %}
+                                <span class="badge bg-success">Active</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                                
+                                {% if category.featured %}
+                                <span class="badge bg-primary ms-2">Featured</span>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="detail-list">
+                            <dt>Created:</dt>
+                            <dd>{{ category.created_at|date:"F j, Y, g:i a" }}</dd>
+
+                            <dt>Last Updated:</dt>
+                            <dd>{{ category.updated_at|date:"F j, Y, g:i a" }}</dd>
+
+                            <dt>Order:</dt>
+                            <dd>{{ category.order }}</dd>
+                        </dl>
+                    </div>
+                </div>
+                
+                <h6 class="section-title">Description</h6>
+                <div>
                     {% if category.description %}
-                        {{ category.description }}
+                        {{ category.description|linebreaks }}
                     {% else %}
-                        <span class="text-muted">No description</span>
+                        <p class="text-muted">No description provided</p>
                     {% endif %}
-                </dd>
+                </div>
+            </div>
+        </div>
+
+        {% if category.attributes.exists %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Category Attributes</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="text-muted mb-3">All Products in this category will have these attributes:</h6>
+                    <div>
+                        {% for attribute in category.attributes.all %}
+                        <div class="attr-tag {% if attribute.is_required %}required{% endif %} {% if attribute.is_filterable %}filterable{% endif %}">
+                            {{ attribute.name }}
+                            {% if attribute.is_required %}
+                            <i class="bi bi-asterisk"></i>
+                            {% endif %}
+                            {% if attribute.is_filterable %}
+                            <i class="bi bi-funnel"></i>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Required</th>
+                                <th>Filterable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attribute in category.attributes.all %}
+                            <tr>
+                                <td>{{ attribute.name }}</td>
+                                <td>
+                                    {% if attribute.description %}
+                                        {{ attribute.description }}
+                                    {% else %}
+                                        <span class="text-muted">--</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if attribute.is_required %}
+                                        <span class="badge bg-warning text-dark">Yes</span>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">No</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if attribute.is_filterable %}
+                                        <span class="badge bg-info">Yes</span>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">No</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i> This category has no defined attributes. Products in this category won't have specific attributes for filtering or description.
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        {% if category.image %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Category Image</h5>
+            </div>
+            <div class="card-body text-center">
+                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-6">
+                <div class="stats-card">
+                    <div class="stats-value">{{ category.subcategories.count }}</div>
+                    <div class="stats-label">Subcategories</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stats-card">
+                    <div class="stats-value">{{ category.products.count }}</div>
+                    <div class="stats-label">Products</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'categories:category_update' category.pk %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-pencil me-2"></i> Edit Category
+                </a>
+                <a href="{% url 'categories:category_create' %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-plus-circle me-2"></i> Add Subcategory 
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="bi bi-box me-2"></i> View Products
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-{% if category.children.exists %}
-<div class="card mb-4">
+{% if category.subcategories.exists %}
+<div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Subcategories</h5>
+        <a href="{% url 'categories:category_create' %}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-plus-circle"></i> Add Subcategory
+        </a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -71,26 +335,44 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Description</th>
+                        <th>Products</th>
+                        <th>Status</th>
+                        <th>Last Updated</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for subcategory in category.children.all %}
+                    {% for subcategory in category.subcategories.all %}
                     <tr>
-                        <td>{{ subcategory.name }}</td>
                         <td>
-                            {% if subcategory.description %}
-                                {{ subcategory.description|truncatewords:10 }}
+                            <a href="{% url 'categories:category_detail' subcategory.pk %}">
+                                {{ subcategory.name }}
+                            </a>
+                        </td>
+                        <td>{{ subcategory.products.count }}</td>
+                        <td>
+                            {% if subcategory.is_active %}
+                                <span class="badge bg-success">Active</span>
                             {% else %}
-                                <span class="text-muted">No description</span>
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                            
+                            {% if subcategory.featured %}
+                                <span class="badge bg-primary ms-1">Featured</span>
                             {% endif %}
                         </td>
+                        <td>{{ subcategory.updated_at|date:"M j, Y" }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="{% url 'categories:category_detail' subcategory.pk %}" class="btn btn-outline-primary">View</a>
-                                <a href="{% url 'categories:category_update' subcategory.pk %}" class="btn btn-outline-secondary">Edit</a>
-                                <a href="{% url 'categories:category_delete' subcategory.pk %}" class="btn btn-outline-danger">Delete</a>
+                                <a href="{% url 'categories:category_detail' subcategory.pk %}" class="btn btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'categories:category_update' subcategory.pk %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'categories:category_delete' subcategory.pk %}" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
                             </div>
                         </td>
                     </tr>
@@ -99,54 +381,6 @@
             </table>
         </div>
     </div>
-</div>
-{% endif %}
-
-{% if attributes %}
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">Attributes</h5>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Required</th>
-                        <th>Default</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for attribute in attributes %}
-                    <tr>
-                        <td>{{ attribute.name }}</td>
-                        <td>{{ attribute.get_attribute_type_display }}</td>
-                        <td>
-                            {% if attribute.required %}
-                                <span class="badge bg-success">Yes</span>
-                            {% else %}
-                                <span class="badge bg-secondary">No</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if attribute.default_value %}
-                                {{ attribute.default_value }}
-                            {% else %}
-                                <span class="text-muted">--</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-{% else %}
-<div class="alert alert-info">
-    This category has no defined attributes.
 </div>
 {% endif %}
 {% endblock %}

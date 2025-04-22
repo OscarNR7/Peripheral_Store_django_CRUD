@@ -8,12 +8,11 @@
                 <img src="{% static 'images/logo-white.png' %}" alt="logo" class="h-20 w-20 object-contain">
                 <span class="text-xl font-bold whitespace-nowrap">Peripheral Store</span>
             </a>
-            
-
             <!-- Barra de búsqueda -->
             <div class="flex flex-1 mx-4 max-w-2xl">
                 <form method="get" action="{% url 'public_products:catalog_list' %}" class="flex w-full">
-                    <select name="category" class="bg-gray-100 text-black px-3 py-2 rounded-l-md border-r border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                    <select name="category" onchange="this.form.submit()"
+                            class="bg-gray-100 text-black px-3 py-2 rounded-l-md border-r border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
                         <option value="">All</option>
                         {% for category in categories %}
                             <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
@@ -53,9 +52,11 @@
                             <a href="{% url 'users:profile_detail' pk=user.pk %}" class="block px-4 py-2 text-sm text-white hover:bg-slate-800">
                                 <i class='bx bx-user mr-2'></i> My Profile
                             </a>
-                            <a href="{% url 'dashboard:index' %}" class="block px-4 py-2 text-sm text-white hover:bg-slate-800">
-                                <i class='bx bxs-dashboard'></i> Admin Dashboard
-                            </a>
+                            {% if request.user.is_staff %}
+                                <a href="{% url 'dashboard:index' %}" class="block px-4 py-2 text-sm text-white hover:bg-slate-800">
+                                    <i class='bx bxs-dashboard'></i> Admin Dashboard
+                                </a>
+                            {% endif %}
                             <form method="post" action="{% url 'users:logout' %}">
                                 {% csrf_token %}
                                 <button type="submit" class="w-full text-left block px-4 py-2 text-sm text-white hover:bg-slate-800">
@@ -87,7 +88,7 @@
         <!-- Segunda fila (categorías) -->
         <div class="flex items-center py-2 border-t border-slate-700">
             <div class="flex space-x-4 text-sm">
-                <a href="#" class="hover:text-cyan-300 flex items-center">
+                <a href="{% url 'public_products:catalog_list' %}" class="hover:text-cyan-300 flex items-center">
                     <i class='bx bx-menu mr-1'></i>
                     <span>All Categories</span>
                 </a>
