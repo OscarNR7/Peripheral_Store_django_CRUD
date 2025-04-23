@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.text import slugify
 from django.urls import reverse
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 class CustomUserManager(BaseUserManager):
@@ -87,7 +88,7 @@ class Profile(models.Model):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', verbose_name='User')
     bio = models.TextField(blank=True, null=True, verbose_name='Biography')
-    avatar = models.ImageField(upload_to='users/', blank=True, null=True, verbose_name='Avatar')
+    avatar = CloudinaryField('image', folder='users', blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True, verbose_name='Date of Birth')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True, verbose_name='Gender')
     newsletter_subscription = models.BooleanField(default=False, verbose_name='Newsletter Subscription')
