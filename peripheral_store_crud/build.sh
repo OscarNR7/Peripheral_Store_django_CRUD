@@ -10,13 +10,14 @@ python manage.py collectstatic --no-input
 # Aplicar migraciones
 python manage.py migrate
 
-# Crear superusuario (opcional)
+# Crear superusuario
 python manage.py shell -c "
 from django.contrib.auth import get_user_model
 User = get_user_model()
-if not User.objects.filter(username='$ADMIN_USER').exists():
+if not User.objects.filter(email='$ADMIN_EMAIL').exists():
     User.objects.create_superuser(
-        username='$ADMIN_USER',
         email='$ADMIN_EMAIL',
-        password='$ADMIN_PASSWORD'
+        password='$ADMIN_PASSWORD',
+        first_name='$ADMIN_FIRST_NAME',
+        last_name='$ADMIN_LAST_NAME'
     )"
