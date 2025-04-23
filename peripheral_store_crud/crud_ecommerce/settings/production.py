@@ -40,6 +40,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
+WHITENOISE_USE_FINDERS = True
+
 # Production logging
 LOGGING = {
     'version': 1,

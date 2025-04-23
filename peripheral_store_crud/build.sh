@@ -4,8 +4,10 @@ set -o errexit
 # Instalar dependencias
 pip install -r requirements.txt
 
+mkdir -p staticfiles
+
 # Configurar static files
-python manage.py collectstatic --no-input --clear
+python manage.py collectstatic --no-input --clear -v 2
 
 # Aplicar migraciones
 python manage.py migrate
