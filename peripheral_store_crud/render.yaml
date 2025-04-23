@@ -1,0 +1,28 @@
+databases:
+  - name: crud_ecommerce_db  
+    plan: free               
+    databaseName: crud_ecommerce
+    user: crud_ecommerce
+
+services:
+  - type: web
+    plan: free
+    name: crud_ecommerce     
+    runtime: python
+    buildCommand: "./build.sh"  
+    startCommand: "gunicorn crud_ecommerce.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: crud_ecommerce_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true  
+      - key: WEB_CONCURRENCY
+        value: 4            
+      - key: IS_RENDER
+        value: "True"       
+      - key: DJANGO_SETTINGS_MODULE
+        value: "crud_ecommerce.settings.production"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
