@@ -4,9 +4,11 @@ certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
 click==8.1.8
+cloudinary==1.44.0
 crispy-bootstrap5==2025.4
 dj-database-url==2.3.0
 Django==5.2
+django-cloudinary-storage==0.3.0
 django-crispy-forms==2.4
 django-filter==25.1
 djangorestframework==3.16.0
@@ -19,6 +21,8 @@ pillow==11.2.1
 psycopg2-binary==2.9.10
 pycparser==2.22
 python-dotenv==1.1.0
+requests==2.32.3
+six==1.17.0
 sqlparse==0.5.3
 typing_extensions==4.13.2
 urllib3==2.4.0

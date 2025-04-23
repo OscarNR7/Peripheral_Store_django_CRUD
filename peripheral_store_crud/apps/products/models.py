@@ -41,7 +41,7 @@ class Product (models.Model):
     
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,related_name='images', verbose_name='Product')
-    image = models.ImageField(upload_to='products/images/', verbose_name='Image')
+    image = models.ImageField(upload_to='products/', verbose_name='Image')
     alt_text = models.CharField(max_length=200, blank=True, null=True, verbose_name='Alt Text')
     is_main = models.BooleanField(default=False, verbose_name='Is Main Image')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')

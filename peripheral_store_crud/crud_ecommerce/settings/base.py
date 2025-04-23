@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'crispy_forms',
     'crispy_bootstrap5',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
