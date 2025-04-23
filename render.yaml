@@ -9,8 +9,8 @@ services:
     plan: free
     name: crud_ecommerce     
     runtime: python
-    buildCommand: "./build.sh"  
-    startCommand: "gunicorn crud_ecommerce.asgi:application -k uvicorn.workers.UvicornWorker"
+    buildCommand: "cd peripheral_store && ./build.sh"  # Cambio clave
+    startCommand: "cd peripheral_store && gunicorn crud_ecommerce.asgi:application -k uvicorn.workers.UvicornWorker"  # Cambio clave
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -23,6 +23,6 @@ services:
       - key: IS_RENDER
         value: "True"       
       - key: DJANGO_SETTINGS_MODULE
-        value: "crud_ecommerce.settings.production"
+        value: "crud_ecommerce.settings.production"  
       - key: ALLOWED_HOSTS
         value: ".onrender.com"

@@ -1,23 +1,22 @@
 #!/usr/bin/env bash
-# Exit on error and print commands
-set -o errexit -o xtrace
+set -o errexit
 
-# Install dependencies
+# Instalar dependencias
 pip install -r requirements.txt
 
-# Static files and migrations
+# Configurar static files
 python manage.py collectstatic --no-input
+
+# Aplicar migraciones
 python manage.py migrate
 
-# Create superuser securely (with environment variables)
+# Crear superusuario (opcional)
 python manage.py shell -c "
-import os
 from django.contrib.auth import get_user_model
 User = get_user_model()
-if not User.objects.exists():  # Better check than filtering by username
+if not User.objects.filter(username='$ADMIN_USER').exists():
     User.objects.create_superuser(
-        username=os.environ.get('ADMIN_USER', 'admin'),
-        email=os.environ.get('ADMIN_EMAIL', 'admin@example.com'),
-        password=os.environ.get('ADMIN_PASSWORD')
-    )
-"
+        username='$ADMIN_USER',
+        email='$ADMIN_EMAIL',
+        password='$ADMIN_PASSWORD'
+    )"
