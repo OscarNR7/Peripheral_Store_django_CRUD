@@ -9,8 +9,8 @@ services:
     plan: free
     name: crud_ecommerce     
     runtime: python
-    buildCommand: "cd peripheral_store && ./build.sh"  # Cambio clave
-    startCommand: "cd peripheral_store && gunicorn crud_ecommerce.asgi:application -k uvicorn.workers.UvicornWorker"  # Cambio clave
+    buildCommand: "cd peripheral_store_crud && ./build.sh"  # Cambio clave
+    startCommand: "cd peripheral_store_crud && gunicorn crud_ecommerce.asgi:application -k uvicorn.workers.UvicornWorker"  # Cambio clave
     envVars:
       - key: DATABASE_URL
         fromDatabase:
