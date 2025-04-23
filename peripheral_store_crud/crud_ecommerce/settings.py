@@ -13,22 +13,39 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import sys
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+#support env variables from .env file if defined
+env_path = load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv(env_path)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vt3jxh5uk8i(-)94m)_21mbu9*a0j59w4nb!b$6+@kq&^g0aoi'
+#SECRET_KEY = 'django-insecure-vt3jxh5uk8i(-)94m)_21mbu9*a0j59w4nb!b$6+@kq&^g0aoi'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','django-insecure-vt3jxh5uk8i(-)94m)_21mbu9*a0j59w4nb!b$6+@kq&^g0aoi')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'OscarNR.pythonanywhere.com').split(',')
 
+# Configuraciones de seguridad para HTTPS
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_HSTS_SECONDS = 0  # Desactiva HSTS
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+
+# Estas configuraciones de seguridad adicionales puedes mantenerlas
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
 
 # Application definition
 #sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
