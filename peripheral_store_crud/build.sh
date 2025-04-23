@@ -5,7 +5,7 @@ set -o errexit
 pip install -r requirements.txt
 
 # Configurar static files
-python manage.py collectstatic --no-input
+python manage.py collectstatic --no-input --clear
 
 # Aplicar migraciones
 python manage.py migrate
