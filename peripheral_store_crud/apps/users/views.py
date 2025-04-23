@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
+from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.contrib import messages
 from .models import User, Profile, Address
@@ -33,26 +34,57 @@ class UserCreateView(CreateView):
     model = User
     form_class = CustomUserCreationForm
     template_name = 'register.html'
-    success_url = reverse_lazy('users:login')
-
+    
     def form_valid(self, form):
-        """Procesa el formulario valido y autentica al usuario"""
+        """Procesa el formulario válido y autentica al usuario"""
         try:
-            response = super().form_valid(form)
+            print("Form is valid. Attempting to save...")
+            print("Form data:", form.cleaned_data)
+            
+            # Guardar el usuario de forma explícita
+            user = form.save(commit=False)
+            print(f"User created (not saved yet): {user.email}")
+            
+            # Guardar el usuario en la base de datos
+            user.save()
+            print(f"User saved with ID: {user.id}")
+            
+            # Configurar la contraseña (si es necesario)
+            raw_password = form.cleaned_data.get('password1')
+            if raw_password:
+                print("Setting password...")
+                user.set_password(raw_password)
+                user.save(update_fields=['password'])
+            
+            # Almacenar el objeto creado
+            self.object = user
+            
+            # Mensaje de éxito
             messages.success(self.request, f'Usuario {self.object.email} registrado correctamente')
+            
+            # Iniciar sesión
             login(self.request, self.object)
-            return response
+            print(f"User logged in: {self.request.user.is_authenticated}")
+            
+            # Redireccionar
+            return HttpResponseRedirect(self.get_success_url())
         except Exception as e:
+            print(f"Error in form_valid: {str(e)}")
+            print(f"Error type: {type(e)}")
+            import traceback
+            traceback.print_exc()
             messages.error(self.request, f"Error al registrar usuario: {str(e)}")
-            return super().form_invalid(form)
+            return self.form_invalid(form)
+    
+    def form_invalid(self, form):
+        """Maneja formularios inválidos"""
+        print("Form is invalid!")
+        print("Form errors:", form.errors)
+        return super().form_invalid(form)
     
     def get_success_url(self):
-        """Obtiene la URL de redireccion tras registro exitoso"""
-        try:
-            return reverse('public_products:catalog_list')
-        except Exception as e:
-            print(f"Error en get_success_url: {str(e)}")
-            return reverse_lazy('users:login')
+        """URL después de registro exitoso"""
+        return reverse_lazy('public_products:catalog_list')
     
 class UserProfileView(DetailView):
     """Vista del perfil del usuario"""

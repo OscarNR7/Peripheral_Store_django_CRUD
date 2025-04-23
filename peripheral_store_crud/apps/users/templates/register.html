@@ -1,34 +1,74 @@
 {% extends "auth_base.html" %}
-
 {% block title %}User Registration{% endblock %}
-
 {% block content %}
 <div class="bg-white rounded-lg shadow-md p-8">
     <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Create Account</h2>
+    
+    <!-- Mostrar errores generales del formulario -->
+    {% if form.non_field_errors %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+    
     <form method="post" class="space-y-4">
         {% csrf_token %}
+        
+        <!-- Email field -->
         <div>
             <label class="block text-gray-700 mb-2">Email</label>
             {{ form.email }}
+            {% if form.email.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
+            {% endif %}
         </div>
-
+        
+        <!-- First Name field -->
+        <div>
+            <label class="block text-gray-700 mb-2">First Name</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.first_name.errors.0 }}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Last Name field -->
+        <div>
+            <label class="block text-gray-700 mb-2">Last Name</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.last_name.errors.0 }}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Password field -->
         <div>
             <label class="block text-gray-700 mb-2">Password</label>
             {{ form.password1 }}
+            {% if form.password1.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.password1.errors.0 }}</p>
+            {% endif %}
+            {% if form.password1.help_text %}
+            <p class="text-gray-500 text-xs mt-1">{{ form.password1.help_text|safe }}</p>
+            {% endif %}
         </div>
-
+        
+        <!-- Confirm Password field -->
         <div>
             <label class="block text-gray-700 mb-2">Confirm Password</label>
             {{ form.password2 }}
+            {% if form.password2.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.password2.errors.0 }}</p>
+            {% endif %}
         </div>
-
+        
         <button type="submit" class="w-full bg-cyan-500 text-white py-2 px-4 rounded-md hover:bg-cyan-600 transition-colors">
             Register
         </button>
     </form>
-
+    
     <div class="mt-6 text-center text-sm text-gray-600">
-        Already have an account? 
+        Already have an account?
         <a href="{% url 'users:login' %}" class="text-cyan-500 hover:underline">Login here</a>
     </div>
 </div>
