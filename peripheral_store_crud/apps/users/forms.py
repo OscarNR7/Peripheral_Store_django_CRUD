@@ -25,8 +25,21 @@ class CustomUserLoginForm(AuthenticationForm):
     '''
     Form for logging in registered users
     '''
-    username = forms.EmailField(label='Email', widget=forms.EmailInput({'placeholder': 'Email address'}))
-    password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
+    username = forms.EmailField(
+        label='Email', 
+        widget=forms.EmailInput({'placeholder': 'Email address', 'class': 'w-full px-3 py-2 border rounded-md'}),
+        error_messages={'required': 'Please enter your email address.'}
+    )
+    password = forms.CharField(
+        label='Password', 
+        widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'w-full px-3 py-2 border rounded-md'}),
+        error_messages={'required': 'Please enter your password.'}
+    )
+    
+    error_messages = {
+        'invalid_login': 'The email or password you entered is incorrect. Please try again.',
+        'inactive': 'This account is inactive. Please contact support for assistance.',
+    }
 
 class CustomUserChangeForm(UserChangeForm):
     '''

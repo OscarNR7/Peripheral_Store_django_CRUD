@@ -8,6 +8,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.tailwindcss.com"></script>
     {% load crispy_forms_tags %}
+    
 <style>
     /* Input styles */
     input[type="text"], 
@@ -53,7 +54,7 @@
     <!-- Logo and name -->
     <header class="text-center mt-12 mb-8">
         <div class="flex items-center justify-center space-x-2">
-            <i class='bx bx-chip text-4xl text-cyan-500'></i>
+            <img src="{% static 'images/logo.svg' %}" alt="Peripheral Store Logo" class="h-20 w-auto">
             <h1 class="text-3xl font-bold text-gray-800">Peripheral Store</h1>
         </div>
     </header>
