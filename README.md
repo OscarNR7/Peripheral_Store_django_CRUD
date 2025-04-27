@@ -1,15 +1,15 @@
-# 🛒 E-Commerce Admin Dashboard - Peripheral Store CRUD
+# E-Commerce Admin Dashboard - Peripheral Store CRUD
 
 A modular, scalable **Admin Dashboard** built with **Django** to manage the backend operations of an online computer peripherals store. This platform enables complete control over products, categories, users, orders, and more—supporting both administrative tasks and public catalog browsing.
 
 ---
-## 📌 System Overview
+## System Overview
 
 This backend system is designed to streamline the management of a computer peripherals e-commerce store. It includes role-based access control, dynamic product specifications, order lifecycle management, and a responsive administrative interface—all optimized for usability, performance, and future integration.
 
 ---
 
-## 👥 System Actors
+## System Actors
 
 | Actor                | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
@@ -19,7 +19,7 @@ This backend system is designed to streamline the management of a computer perip
 | **PostgreSQL Database** | Backend database where all structured data is stored securely.           |
 ---
 
-## ✅ Functional Requirements
+## Functional Requirements
 
 | ID      | Name                      | Description                                                                                 |
 |---------|---------------------------|---------------------------------------------------------------------------------------------|
@@ -38,7 +38,7 @@ This backend system is designed to streamline the management of a computer perip
 
 ---
 
-## 🚀 Non-Functional Requirements
+## Non-Functional Requirements
 
 | ID      | Name                       | Description                                                                                 |
 |---------|----------------------------|---------------------------------------------------------------------------------------------|
@@ -57,7 +57,7 @@ This backend system is designed to streamline the management of a computer perip
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 - **Python 3**
 - **Django**
