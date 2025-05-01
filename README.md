@@ -1,6 +1,6 @@
 # E-Commerce Admin Dashboard - Peripheral Store CRUD
 
-A modular, scalable **Admin Dashboard** built with **Django** to manage the backend operations of an online computer peripherals store. This platform enables complete control over products, categories, users, orders, and more—supporting both administrative tasks and public catalog browsing.
+A modular, scalable **Admin Dashboard** built with **Django** to manage the backend operations of an online computer peripherals store. This platform enables complete control over products, categories, users, orders, and more supporting both administrative tasks and public catalog browsing.
 
 ---
 ## System Overview
@@ -15,7 +15,7 @@ This backend system is designed to streamline the management of a computer perip
 |---------------------|-----------------------------------------------------------------------------|
 | **Administrator**    | Manages all areas: products, users, categories, orders, etc.                |
 | **Public User**      | Can register, browse products, place orders, and manage addresses.          |
-| **Django Admin**     | Uses Django’s built-in admin panel for low-level data operations.           |
+| **Django Admin**     | Uses Django's built-in admin panel for low-level data operations.           |
 | **PostgreSQL Database** | Backend database where all structured data is stored securely.           |
 ---
 
@@ -35,6 +35,11 @@ This backend system is designed to streamline the management of a computer perip
 | FR-10   | **Address Management**    | Users manage multiple addresses with default shipping/billing.                             |
 | FR-11   | **Order Item Management** | Admins can edit/remove individual items in orders and recalculate totals.                  |
 | FR-12   | **Product Specifications**| Products include dynamic specifications based on category.                                 |
+| FR-13   | **Cart Creation**         | Automatic cart creation for each new registered user.                                     |
+| FR-14   | **Cart Management**       | Users can add, update quantity, remove, and clear products in their cart.                 |
+| FR-15   | **Stock Validation**      | System validates product availability before cart operations and checkout.                 |
+| FR-16   | **Checkout Process**      | Users can convert cart contents to orders with shipping/billing selection.                |
+| FR-17   | **Cart Subtotal**         | Real-time calculation of cart subtotal and item counts.                                   |
 
 ---
 
@@ -54,13 +59,32 @@ This backend system is designed to streamline the management of a computer perip
 | NFR-10  | **Display Currency**       | All prices are shown in **Mexican Pesos (MXN)**.                                           |
 | NFR-11  | **Dashboard Performance**  | Dashboard stats load within 3 seconds.                                                     |
 | NFR-12  | **Search Responsiveness**  | Product searches respond in < 4 second for typical queries.                                |
+| NFR-13  | **Cart Performance**       | Cart operations (add/update/remove) complete in < 4 seconds.                               |
+| NFR-14  | **Ajax Support**           | Cart actions support AJAX for dynamic UI updates without page reload.                      |
+| NFR-15  | **Transaction Integrity**  | Checkout process uses atomic transactions to maintain data integrity.                      |
+| NFR-16  | **Real-time Validation**   | Stock validation occurs in real-time when adding products or updating quantities.          |
 
 ---
 
+## Live Demo
+
+> The admin dashboard and public catalog are deployed and accessible via the following link.  
+> **Deployment was done using [Render](https://render.com/).**
+
+🌐 **Live Site:** [https://crud-ecommerce-ivay.onrender.com/](https://crud-ecommerce-ivay.onrender.com/)
+
+---
+## Admin Credentials
+
+> They allow access to the admin dashboard for demonstration and testing.
+
+- **Email:** admin@email.com  
+- **Password:** AyZ5-Ws1r
+---
 ## Technologies Used
 
 - **Python 3**
 - **Django**
 - **PostgreSQL**
 - **HTML/CSS/JS**
-- *(Optionally: Tailwind CSS or Bootstrap for UI styling)*
+- *(Optionally: Tailwind CSS & Bootstrap for UI styling)*
