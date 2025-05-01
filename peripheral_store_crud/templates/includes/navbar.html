@@ -75,13 +75,15 @@
                         </div>
                     {% endif %}
                 </div>
-
                 <!-- Cart -->
-                <a href="{% url 'carts:cart' %}" class="flex items-center hover:text-cyan-300 relative">
-                    <i class='bx bx-cart text-2xl'></i>
-                    <span class="absolute -top-2 -right-2 bg-cyan-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                    <span class="hidden md:inline ml-1 text-sm font-medium">Cart</span>
-                </a>
+                    <a class="nav-link position-relative" href="{% url 'carts:cart' %}">
+                        <i class="bx bx-cart"></i> Cart
+                        {% if request.user.is_authenticated %}
+                            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ request.user.cart.total_items }}
+                            </span>
+                        {% endif %}
+                    </a>
             </div>
         </div>
 

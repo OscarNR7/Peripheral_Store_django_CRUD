@@ -1,0 +1,175 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Checkout</h1>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <form method="post" action="{% url 'carts:checkout' %}">
+                {% csrf_token %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Shipping Address</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if shipping_addresses %}
+                            <div class="mb-3">
+                                <select name="shipping_address" class="form-select" required>
+                                    <option value="">Select shipping address</option>
+                                    {% for address in shipping_addresses %}
+                                        <option value="{{ address.id }}">
+                                            {{ address.street_address }}, {{ address.city }}, {{ address.state }} {{ address.postal_code }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <a href="{% url 'users:address_create' %}?next={% url 'carts:checkout' %}&type=shipping" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-plus"></i> Add New Address
+                            </a>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                You don't have any shipping addresses yet.
+                                <a href="{% url 'users:address_create' %}?next={% url 'carts:checkout' %}&type=shipping" class="btn btn-primary btn-sm ms-2">Add Shipping Address</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Billing Address</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if billing_addresses %}
+                            <div class="mb-3">
+                                <select name="billing_address" class="form-select" required>
+                                    <option value="">Select billing address</option>
+                                    {% for address in billing_addresses %}
+                                        <option value="{{ address.id }}">
+                                            {{ address.street_address }}, {{ address.city }}, {{ address.state }} {{ address.postal_code }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <a href="{% url 'users:address_create' %}?next={% url 'carts:checkout' %}&type=billing" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-plus"></i> Add New Address
+                            </a>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                You don't have any billing addresses yet.
+                                <a href="{% url 'users:address_create' %}?next={% url 'carts:checkout' %}&type=billing" class="btn btn-primary btn-sm ms-2">Add Billing Address</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Payment Method</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <select name="payment_method" class="form-select" required>
+                                <option value="">Select payment method</option>
+                                {% for value, text in payment_methods %}
+                                    <option value="{{ value }}">{{ text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Notes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <textarea name="notes" class="form-control" rows="3" placeholder="Additional notes about your order (optional)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Place Order</button>
+                    <a href="{% url 'carts:cart' %}" class="btn btn-outline-secondary">Back to Cart</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr>
+                                    <td>{{ item.product.name }} <span class="text-muted">x {{ item.quantity }}</span></td>
+                                    <td class="text-end">${{ item.total_price }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td class="fw-bold">Subtotal</td>
+                                    <td class="text-end fw-bold">${{ subtotal }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Shipping</td>
+                                    <td class="text-end">$300.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Tax</td>
+                                    <td class="text-end">$120.00</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold h5">Total</td>
+                                    <td class="text-end fw-bold h5">${{ subtotal|add:300.00|add:120.00 }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Script para validar el formulario antes de enviar
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            const shippingAddress = document.querySelector('select[name="shipping_address"]').value;
+            const billingAddress = document.querySelector('select[name="billing_address"]').value;
+            const paymentMethod = document.querySelector('select[name="payment_method"]').value;
+            
+            if (!shippingAddress || !billingAddress || !paymentMethod) {
+                event.preventDefault();
+                alert('Please fill in all required fields.');
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -3,107 +3,184 @@
 
 {% block title %}Shopping Cart{% endblock %}
 
+{% block extra_css %}
+<style>
+    .quantity-input {
+        width: 70px;
+    }
+    .product-img {
+        max-width: 80px;
+        max-height: 80px;
+        object-fit: cover;
+    }
+    .empty-cart-container {
+        text-align: center;
+        padding: 3rem 0;
+    }
+    .empty-cart-icon {
+        font-size: 5rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container my-5">
-    <h1 class="mb-4">Shopping Cart</h1>
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Shopping Cart</h1>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
 
     {% if cart_items %}
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="mb-0">Your Items ({{ cart.total_items }})</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in cart_items %}
-                        <tr id="cart-item-{{ item.id }}">
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    {% if item.product.images.filter.exists %}
-                                    <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail me-3" style="width: 80px;">
-                                    {% else %}
-                                    <div class="bg-light me-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
-                                        <span class="text-muted">No image</span>
-                                    </div>
-                                    {% endif %}
-                                    <div>
-                                        <h6 class="mb-0">{{ item.product.name }}</h6>
-                                        <small class="text-muted">SKU: {{ item.product.sku }}</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${{ item.product.price }}</td>
-                            <td>
-                                <form method="post" action="{% url 'carts:update_cart_item' item.id %}" class="d-flex align-items-center update-quantity-form">
-                                    {% csrf_token %}
-                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="form-control form-control-sm me-2" style="width: 70px;">
-                                    <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-                                </form>
-                            </td>
-                            <td>${{ item.total_price }}</td>
-                            <td>
-                                <form method="post" action="{% url 'carts:remove_from_cart' item.id %}" class="remove-item-form">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6 offset-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Order Summary</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Subtotal:</span>
-                        <span>${{ subtotal }}</span>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Cart Items ({{ cart.total_items }})</h5>
                     </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Shipping:</span>
-                        <span>To be calculated</span>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if item.product.image %}
+                                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="product-img me-3">
+                                                {% else %}
+                                                    <img src="{% static 'images/placeholder.png' %}" alt="{{ item.product.name }}" class="product-img me-3">
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="mb-0">{{ item.product.name }}</h6>
+                                                    <small class="text-muted">{{ item.product.category }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>${{ item.product.price }}</td>
+                                        <td>
+                                            <form action="{% url 'carts:update_cart_item' item.id %}" method="post" class="update-cart-form">
+                                                {% csrf_token %}
+                                                <div class="input-group quantity-input">
+                                                    <input type="number" name="quantity" min="0" max="{{ item.product.stock }}" value="{{ item.quantity }}" class="form-control form-control-sm" required>
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                        <i class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </td>
+                                        <td>${{ item.total_price }}</td>
+                                        <td>
+                                            <form action="{% url 'carts:remove_from_cart' item.id %}" method="post" class="remove-item-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <hr>
-                    <div class="d-flex justify-content-between mb-4">
-                        <h5>Total:</h5>
-                        <h5>${{ subtotal }}</h5>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'carts:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
-                        <form method="post" action="{% url 'carts:clear_cart' %}" class="mt-2">
+                    <div class="card-footer d-flex justify-content-between">
+                        <form action="{% url 'carts:clear_cart' %}" method="post" class="clear-cart-form">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger w-100">Clear Cart</button>
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class='bx bx-eraser'></i> Clear Cart
+                            </button>
                         </form>
+                        <a href="{% url 'public_products:catalog_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-shopping-cart"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>Subtotal</td>
+                                        <td class="text-end cart-subtotal">${{ subtotal }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipping</td>
+                                        <td class="text-end">$300.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tax</td>
+                                        <td class="text-end">$120.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold h5">Total</td>
+                                        <td class="text-end fw-bold h5">${{ subtotal|add:300.00|add:120.00 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-grid">
+                            <a href="{% url 'carts:checkout' %}" class="btn btn-primary">
+                                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     {% else %}
-    <div class="card text-center p-5">
-        <div class="card-body">
-            <h3 class="mb-4">Your cart is empty</h3>
-            <p class="mb-4">Looks like you haven't added any products to your cart yet.</p>
-            <a href="{% url 'public_products:catalog_list' %}" class="btn btn-primary">Continue Shopping</a>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body empty-cart-container">
+                        <div class="empty-cart-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h3>Your cart is empty</h3>
+                        <p class="text-muted">Looks like you haven't added any products to your cart yet.</p>
+                        <a href="{% url 'public_products:catalog_list' %}" class="btn btn-primary mt-3">
+                            <i class="fas fa-shopping-cart"></i> Start Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
     {% endif %}
 </div>
+
+<!-- Toast container for notifications -->
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/cart.js' %}"></script>
 {% endblock %}

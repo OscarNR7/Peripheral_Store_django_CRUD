@@ -66,15 +66,20 @@
 
                     <!-- Actions -->
                     <div class="mb-8">
-                        <div class="flex items-center mb-4">
-                            <button class="bg-slate-700 px-3 py-1 rounded-l-lg">-</button>
-                            <input type="number" value="1" min="1" max="{{ product.stock }}" 
-                                   class="w-16 text-center bg-slate-600 py-1">
-                            <button class="bg-slate-700 px-3 py-1 rounded-r-lg">+</button>
-                        </div>
-                        <button class="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3 px-4 rounded-lg mb-2 transition-colors">
-                            Add to Cart
-                        </button>
+                        <form method="post" action="{% url 'carts:add_to_cart' %}" class="add-to-cart-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <div class="flex items-center mb-4">
+                                <button type="button" class="bg-slate-700 px-3 py-1 rounded-l-lg" onclick="decrementQuantity()">-</button>
+                                <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}" 
+                                       class="w-16 text-center bg-slate-600 py-1 text-white">
+                                <button type="button" class="bg-slate-700 px-3 py-1 rounded-r-lg" onclick="incrementQuantity()">+</button>
+                            </div>
+                            <button type="submit" {% if product.stock <= 0 %}disabled{% endif %}
+                                    class="w-full {% if product.stock > 0 %}bg-cyan-500 hover:bg-cyan-600{% else %}bg-gray-500 cursor-not-allowed{% endif %} text-white py-3 px-4 rounded-lg mb-2 transition-colors">
+                                {% if product.stock > 0 %}Add to Cart{% else %}Out of Stock{% endif %}
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Description -->
@@ -137,5 +142,59 @@ function changeMainImage(imageUrl) {
     });
     event.currentTarget.classList.add('border-2', 'border-cyan-500');
 }
+function decrementQuantity() {
+    const input = document.getElementById('quantity');
+    if (input.value > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function incrementQuantity() {
+    const input = document.getElementById('quantity');
+    const max = parseInt(input.getAttribute('max'));
+    if (parseInt(input.value) < max) {
+        input.value = parseInt(input.value) + 1;
+    }
+}
+
+// Optional: Add AJAX functionality for adding to cart
+document.addEventListener('DOMContentLoaded', function() {
+    const addToCartForm = document.querySelector('.add-to-cart-form');
+    
+    if (addToCartForm) {
+        addToCartForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(addToCartForm);
+            
+            fetch(addToCartForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    alert(data.message);
+                    
+                    // Update cart count in navbar if you have a cart counter
+                    const cartCountElement = document.getElementById('cart-count');
+                    if (cartCountElement) {
+                        cartCountElement.textContent = data.cart_count;
+                    }
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error adding the product to your cart.');
+            });
+        });
+    }
+});
 </script>
 {% endblock %}

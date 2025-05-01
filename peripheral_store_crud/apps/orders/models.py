@@ -103,7 +103,3 @@ class OrderItem(models.Model):
     def save(self, *args, **kwargs):
         self.total_price = self.quantity * self.unit_price
         super().save(*args, **kwargs)
-    
-# por hacer:
-# - [ ] Crear un modelo para el metodo de envio
-# - [ ] Crear un modelo para el metodo de pago

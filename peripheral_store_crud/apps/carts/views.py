@@ -10,7 +10,7 @@ from .models import Cart, CartItem
 from apps.products.models import Product
 from apps.orders.models import Order, OrderItem
 from apps.users.models import Address
-
+from decimal import Decimal
 import json
 
 # Create your views here.
@@ -266,9 +266,9 @@ class CheckoutView(LoginRequiredMixin, View):
                 order = Order.objects.create(
                     user=request.user,
                     subtotal=cart.subtotal,
-                    shipping_cost=300.00,
-                    tax=120.00,  
-                    discount=0.00,  
+                    shipping_cost=Decimal('300.00'),
+                    tax=Decimal('120.00'),            
+                    discount=Decimal('0.00'),
                     shipping_address=shipping_address,
                     billing_address=billing_address,
                     payment_method=payment_method,
