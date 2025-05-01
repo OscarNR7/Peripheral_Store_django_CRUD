@@ -4,9 +4,7 @@ from .models import User, Profile, Address
 
 # SignUp Form
 class CustomUserCreationForm(UserCreationForm):
-    '''
-    Form for user registration
-    '''
+    '''Form para el regsitro de suuarios'''
     class Meta:
         model = User
         fields = ('email','first_name','last_name')
@@ -22,9 +20,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 # Login Form
 class CustomUserLoginForm(AuthenticationForm):
-    '''
-    Form for logging in registered users
-    '''
+    '''Form para logearse'''
     username = forms.EmailField(
         label='Email', 
         widget=forms.EmailInput({'placeholder': 'Email address', 'class': 'w-full px-3 py-2 border rounded-md'}),
@@ -42,9 +38,7 @@ class CustomUserLoginForm(AuthenticationForm):
     }
 
 class CustomUserChangeForm(UserChangeForm):
-    '''
-    Form for editing user data
-    '''
+    '''Form para editar la informacion de suaurios'''
     password = None  # To hide the password field
 
     class Meta:
@@ -58,9 +52,7 @@ class CustomUserChangeForm(UserChangeForm):
         }
 
 class ProfileForm(forms.ModelForm):
-    '''
-    Form for editing user profile
-    '''
+    '''form para editar el perfil del suaurio'''
     class Meta:
         model = Profile
         fields = ("bio", "avatar", "date_of_birth", "gender", "newsletter_subscription")
@@ -69,9 +61,7 @@ class ProfileForm(forms.ModelForm):
             "date_of_birth": forms.DateInput(attrs={'type': 'date'}),
         }
 class AddressForm(forms.ModelForm):
-    '''
-    Form for managing user addresses
-    '''
+    '''form para gestionar las direcciones'''
     class Meta:
         model = Address
         exclude = ('user', 'created_at', 'updated_at')

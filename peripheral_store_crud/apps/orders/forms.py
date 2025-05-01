@@ -7,9 +7,7 @@ from apps.products.models import Product
 
 
 class OrderForm(forms.ModelForm):
-    """
-    Formulario para crear/actulizar pedido
-    """
+    """Formulario para crear/actulizar pedido"""
     class Meta:
         model = Order
         fields = ['status', 'payment_method', 'payment_status', 'tracking_number',
@@ -44,9 +42,7 @@ class OrderForm(forms.ModelForm):
         return instance
 
 class OrderItemForm(forms.ModelForm):
-    """
-    Formulario para crear/actualizar items de un pedido
-    """
+    """Formulario para crear/actualizar items de un pedido"""
     class Meta:
         model = OrderItem
         fields = ['order', 'product', 'quantity', 'unit_price']

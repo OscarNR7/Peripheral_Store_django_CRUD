@@ -30,6 +30,7 @@ urlpatterns = [
     path('dashboard/categories/', include('apps.categories.urls')),
     path('dashboard/products/', include('apps.products.urls')),
     path('dashboard/orders/', include('apps.orders.urls', namespace='orders')),
+    path('cart/', include('apps.carts.urls',namespace='carts')),
     path('home/', include(('apps.products.public_urls', 'public_products'), namespace='public_products')),
 ]
 

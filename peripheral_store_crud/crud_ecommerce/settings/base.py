@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'apps.categories',
     'apps.users',
     'apps.orders',
+    'apps.carts',
     
     # Third party apps
     'cloudinary',

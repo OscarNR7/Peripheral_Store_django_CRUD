@@ -20,6 +20,4 @@ urlpatterns = [
     # Order Items
     path('<slug:order_number>/items/<int:item_id>/edit/', views.OrderItemUpdateView.as_view(), name='order_item_update'),
     path('<slug:order_number>/items/<int:item_id>/delete/', views.OrderItemDeleteView.as_view(), name='order_item_delete'),
-
-   
 ]
