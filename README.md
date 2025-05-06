@@ -88,3 +88,8 @@ This backend system is designed to streamline the management of a computer perip
 - **PostgreSQL**
 - **HTML/CSS/JS**
 - *(Optionally: Tailwind CSS & Bootstrap for UI styling)*
+
+---
+## Use Case Diagram
+
+![Use Case Diagram](diagrams/use_case_diagram.jpeg)
