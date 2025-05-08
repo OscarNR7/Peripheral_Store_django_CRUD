@@ -1,66 +1,194 @@
-/* Este CSS puede incluirse en un archivo estático o en la sección <style> de tu template */
-
-/* Estilo para items del carrito */
-.cart-item-row:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    transition: background-color 0.3s ease;
+.cart-page {
+    background-color: #1e293b;
+    color: #fff;
+    min-height: 80vh;
 }
 
-/* Efecto de hover para botón de eliminar */
-.remove-item-btn:hover {
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
+.cart-container {
+    padding: 2rem 0;
 }
 
-/* Animación de entrada para notificaciones */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.cart-title {
+    font-weight: 600;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
 }
 
-.alert {
-    animation: fadeIn 0.3s ease forwards;
+.cart-card {
+    background-color: #0f172a;
+    border: none;
+    border-radius: 0.5rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
 }
 
-/* Mejorar la apariencia de los inputs de cantidad */
+.cart-card .card-header {
+    background-color: #1e293b;
+    border-bottom: 1px solid #334155;
+    color: #fff;
+    font-weight: 500;
+}
+
+.cart-card .card-footer {
+    background-color: #1e293b;
+    border-top: 1px solid #334155;
+}
+
+.table {
+    color: #e2e8f0;
+}
+
+.table thead th {
+    border-color: #334155;
+    font-weight: 500;
+    color: #94a3b8;
+}
+
+.table tbody td {
+    border-color: #334155;
+    vertical-align: middle;
+}
+
+.product-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    background-color: #fff;
+    padding: 0.25rem;
+    border: 1px solid #334155;
+}
+
 .quantity-input {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    color: #fff;
     width: 70px;
-    text-align: center;
-    border-radius: 0;
-    border: 1px solid #ccc;
-}
-
-.quantity-btn {
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    padding: 0.375rem 0.75rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.quantity-btn:hover {
-    background-color: #e9ecef;
-}
-
-/* Estilo para fila de ítem recién actualizado */
-.updated-row {
-    animation: highlight 1s ease;
-}
-
-@keyframes highlight {
-    0% { background-color: rgba(0, 123, 255, 0.1); }
-    100% { background-color: transparent; }
-}
-
-/* Estilo para orden resumen */
-.order-summary {
-    border-left: 3px solid #007bff;
-    background-color: #f8f9fa;
-    padding: 1.5rem;
     border-radius: 0.25rem;
 }
 
-.order-summary h5 {
-    color: #007bff;
+.btn-quantity {
+    background-color: #0891b2;
+    color: #fff;
+    border: none;
+    border-radius: 0.25rem;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-quantity:hover {
+    background-color: #06b6d4;
+}
+
+.btn-primary {
+    background-color: #0891b2;
+    border-color: #0891b2;
+}
+
+.btn-primary:hover {
+    background-color: #06b6d4;
+    border-color: #06b6d4;
+}
+
+.btn-outline-primary {
+    color: #06b6d4;
+    border-color: #06b6d4;
+}
+
+.btn-outline-primary:hover {
+    background-color: #06b6d4;
+    border-color: #06b6d4;
+}
+
+.btn-outline-danger {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.btn-outline-danger:hover {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    border-color: #ef4444;
+}
+
+.btn-action {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+}
+
+.empty-cart-container {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.empty-cart-icon {
+    font-size: 6rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+}
+
+.summary-card {
+    position: sticky;
+    top: 1rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #334155;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-total {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #fff;
+}
+
+.product-name {
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+
+.product-category {
+    font-size: 0.875rem;
+    color: #94a3b8;
+}
+
+.product-price {
+    font-weight: 500;
+    color: #22d3ee;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .product-img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .cart-table th:nth-child(2),
+    .cart-table td:nth-child(2) {
+        display: none;
+    }
 }

@@ -296,7 +296,7 @@ class CheckoutView(LoginRequiredMixin, View):
                 #Vaciar el carrito
                 cart.clear()
                 messages.success(request,f"Your order has been placed successfully. Order number: {order.order_number}")
-                return redirect('orders:order_detail', order_number=order.order_number)
+                return redirect('public_products:catalog_list')
         except Exception as e:
             messages.error(request, f"Error processing order: {str(e)}")
             return redirect('carts:checkout')

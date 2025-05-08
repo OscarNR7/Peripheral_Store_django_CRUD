@@ -6,168 +6,238 @@
 
 {% block extra_css %}
 <style>
-    .formset-row {
+    .form-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: none;
+    }
+    .form-header {
         background-color: #f8f9fa;
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 5px;
+        border-bottom: 1px solid #e9ecef;
+        padding: 1.25rem 1.5rem;
+        border-radius: 12px 12px 0 0 !important;
+    }
+    .form-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    .formset-row {
+        background-color: #f8fafc;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        border-left: 3px solid #dee2e6;
+        transition: all 0.2s ease;
+    }
+    .formset-row:hover {
+        border-left-color: #0d6efd;
+        background-color: #f1f8ff;
     }
     .delete-row {
         color: #dc3545;
         cursor: pointer;
+        transition: all 0.2s ease;
     }
-    .add-row {
-        margin-top: 10px;
+    .delete-row:hover {
+        transform: scale(1.1);
+    }
+    .add-row-btn {
+        border: 2px dashed #dee2e6;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease;
+    }
+    .add-row-btn:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    .required-field::after {
+        content: " *";
+        color: #dc3545;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'categories:category_list' %}">Categories</a></li>
-                {% if category %}
-                    <li class="breadcrumb-item"><a href="{% url 'categories:category_detail' category.pk %}">{{ category.name }}</a></li>
-                    <li class="breadcrumb-item active">Edit</li>
-                {% else %}
-                    <li class="breadcrumb-item active">New Category</li>
-                {% endif %}
-            </ol>
-        </nav>
-        <h1>{% if category %}Edit Category{% else %}New Category{% endif %}</h1>
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'categories:category_list' %}"><i class="bi bi-grid"></i> Categories</a></li>
+                    {% if category %}
+                        <li class="breadcrumb-item"><a href="{% url 'categories:category_detail' category.pk %}">{{ category.name }}</a></li>
+                        <li class="breadcrumb-item active">Edit</li>
+                    {% else %}
+                        <li class="breadcrumb-item active">New Category</li>
+                    {% endif %}
+                </ol>
+            </nav>
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    {% if category %}
+                        <i class="bi bi-pencil-square"></i> Edit Category
+                    {% else %}
+                        <i class="bi bi-plus-circle"></i> New Category
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
     </div>
-</div>
 
-<div class="card">
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data">
+    <div class="card form-card mb-4">
+        <div class="card-header form-header">
+            <h4 class="mb-0">
+                {% if category %}
+                    <i class="bi bi-gear"></i> Category Settings
+                {% else %}
+                    <i class="bi bi-gear"></i> Setup New Category
+                {% endif %}
+            </h4>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %}
-
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <h4>Basic Information</h4>
-
-                    <div class="mb-3">
-                        <label for="{{ form.name.id_for_label }}" class="form-label">Name *</label>
-                        {{ form.name }}
-                        {% if form.name.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.name.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="{{ form.parent.id_for_label }}" class="form-label">Parent Category</label>
-                        {{ form.parent }}
-                        {% if form.parent.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.parent.errors }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Leave blank if it is a main category</div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
-                        {{ form.description }}
-                        {% if form.description.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.description.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <h4>Attributes</h4>
-            <div class="alert alert-info">
-                Attributes define the properties that items in this category will have.
-            </div>
-
-            {{ attribute_formset.management_form }}
-            <div id="attribute-formset">
-                {% for attribute_form in attribute_formset %}
-                    <div class="formset-row">
-                        {% if attribute_form.instance.pk %}{{ attribute_form.DELETE }}{% endif %}
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label class="form-label">Name *</label>
-                                    {{ attribute_form.name }}
-                                    {% if attribute_form.name.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            {{ attribute_form.name.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="mb-3">
-                                    <label class="form-label">Description</label>
-                                    {{ attribute_form.description }}
-                                    {% if attribute_form.description.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            {{ attribute_form.description.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="mb-3">
-                                    <label class="form-label">Required</label>
-                                    <div class="form-check">
-                                        {{ attribute_form.is_required }}
-                                        <label class="form-check-label" for="{{ attribute_form.is_required.id_for_label }}">
-                                            Yes
-                                        </label>
+            
+            <div class="card-body">
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h5 class="mb-4 d-flex align-items-center">
+                        <i class="bi bi-info-circle me-2"></i> Basic Information
+                    </h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.name }}
+                                <label for="{{ form.name.id_for_label }}" class="form-label required-field">Name</label>
+                                {% if form.name.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.name.errors }}
                                     </div>
-                                </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-2">
-                                <div class="mb-3">
-                                    <label class="form-label">Filterable</label>
-                                    <div class="form-check">
-                                        {{ attribute_form.is_filterable }}
-                                        <label class="form-check-label" for="{{ attribute_form.is_filterable.id_for_label }}">
-                                            Yes
-                                        </label>
+                            
+                            <div class="form-floating mb-3">
+                                {{ form.parent }}
+                                <label for="{{ form.parent.id_for_label }}" class="form-label">Parent Category</label>
+                                {% if form.parent.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.parent.errors }}
                                     </div>
-                                </div>
+                                {% endif %}
+                                <small class="text-muted mt-1 d-block">Leave blank if this is a main category</small>
                             </div>
-                            <div class="col-md-1">
-                                {% if attribute_form.instance.pk %}
-                                    <div class="mb-3 text-end">
-                                        <label class="form-label d-block">Delete</label>
-                                        <label class="form-check-label delete-row" for="{{ attribute_form.DELETE.id_for_label }}">
-                                            <i class="bi bi-trash"></i>
-                                        </label>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                {{ form.description }}
+                                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                                {% if form.description.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.description.errors }}
                                     </div>
                                 {% endif %}
                             </div>
                         </div>
-                        {{ attribute_form.id }}
                     </div>
-                {% endfor %}
-            </div>
-
-            <div class="text-end add-row">
-                <button type="button" id="add-attribute" class="btn btn-outline-primary">
-                    <i class="bi bi-plus-circle"></i> Add Attribute
-                </button>
-            </div>
-
-            <div class="d-flex justify-content-between mt-4">
-                <a href="{% if category %}{% url 'categories:category_detail' category.pk %}{% else %}{% url 'categories:category_list' %}{% endif %}" class="btn btn-secondary">
-                    Cancel
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    {% if category %}Update{% else %}Create{% endif %} Category
-                </button>
+                </div>
+                
+                <!-- Attributes Section -->
+                <div class="form-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 d-flex align-items-center">
+                            <i class="bi bi-tags me-2"></i> Attributes
+                        </h5>
+                        <span class="badge bg-primary">{{ attribute_formset.total_form_count }} attributes</span>
+                    </div>
+                    
+                    <div class="alert alert-info d-flex align-items-center">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <div>Attributes define the properties that items in this category will have.</div>
+                    </div>
+                    
+                    {{ attribute_formset.management_form }}
+                    <div id="attribute-formset">
+                        {% for attribute_form in attribute_formset %}
+                            <div class="formset-row position-relative">
+                                {% if attribute_form.instance.pk %}{{ attribute_form.DELETE }}{% endif %}
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            {{ attribute_form.name }}
+                                            <label class="form-label required-field">Name</label>
+                                            {% if attribute_form.name.errors %}
+                                                <div class="invalid-feedback">
+                                                    {{ attribute_form.name.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-floating">
+                                            {{ attribute_form.description }}
+                                            <label class="form-label">Description</label>
+                                            {% if attribute_form.description.errors %}
+                                                <div class="invalid-feedback">
+                                                    {{ attribute_form.description.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="d-flex h-100 align-items-center justify-content-end">
+                                            <div class="form-check form-switch me-3">
+                                                {{ attribute_form.is_required }}
+                                                <label class="form-check-label" for="{{ attribute_form.is_required.id_for_label }}" data-bs-toggle="tooltip" title="Required">
+                                                    Required
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                {{ attribute_form.is_filterable }}
+                                                <label class="form-check-label" for="{{ attribute_form.is_filterable.id_for_label }}" data-bs-toggle="tooltip" title="Filterable">
+                                                    Filterable
+                                                </label>
+                                            </div>
+                                            {% if attribute_form.instance.pk %}
+                                                <button type="button" class="btn btn-danger delete-row ms-2" data-bs-toggle="tooltip" title="Delete">
+                                                    <i class='bx bx-trash' ></i>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {{ attribute_form.id }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" id="add-attribute" class="btn add-row-btn w-100 py-3 mt-3">
+                        <i class='bx bxs-plus-circle'></i> Add Attribute
+                    </button>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between border-top pt-4 mt-3">
+                    <a href="{% if category %}{% url 'categories:category_detail' category.pk %}{% else %}{% url 'categories:category_list' %}{% endif %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        {% if category %}
+                            <i class="bi bi-check-circle me-1"></i> Update Category
+                        {% else %}
+                            <i class="bi bi-plus-circle me-1"></i> Create Category
+                        {% endif %}
+                    </button>
+                </div>
             </div>
         </form>
     </div>
@@ -177,6 +247,13 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Enable tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Formset management
         const formsetContainer = document.getElementById('attribute-formset');
         const addButton = document.getElementById('add-attribute');
         const totalFormsInput = document.querySelector('[name="attributes-TOTAL_FORMS"]');
@@ -187,35 +264,59 @@
             const newForm = formsetContainer.querySelector('.formset-row').cloneNode(true);
             const newFormHTML = newForm.innerHTML.replace(/attributes-\d+/g, `attributes-${formCount}`);
             newForm.innerHTML = newFormHTML;
+            
+            // Clear all inputs in the new form
             newForm.querySelectorAll('input[type="text"], textarea, select').forEach(input => {
                 input.value = '';
+                input.classList.remove('is-invalid');
             });
+            
+            // Reset checkboxes
             newForm.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
-            const deleteField = newForm.querySelector('input[type="checkbox"][name$="DELETE"]');
-            if (deleteField) {
-                deleteField.checked = false;
-            }
+            
+            // Remove any existing error messages
+            newForm.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+            
+            // Add the new form to the container
             formsetContainer.appendChild(newForm);
             formCount++;
             totalFormsInput.value = formCount;
+            
+            // Initialize tooltips for the new form
+            const newTooltips = [].slice.call(newForm.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            newTooltips.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         });
 
+        // Handle delete row clicks
         formsetContainer.addEventListener('click', function(e) {
-            if (e.target.classList.contains('delete-row') || (e.target.parentElement && e.target.parentElement.classList.contains('delete-row'))) {
-                const checkbox = e.target.closest('.formset-row').querySelector('input[type="checkbox"][name$="DELETE"]');
-                if (checkbox) {
-                    checkbox.checked = !checkbox.checked;
-                    const row = e.target.closest('.formset-row');
-                    row.style.opacity = checkbox.checked ? '0.5' : '1';
+            if (e.target.classList.contains('delete-row') || 
+                (e.target.parentElement && e.target.parentElement.classList.contains('delete-row'))) {
+                const row = e.target.closest('.formset-row');
+                const deleteCheckbox = row.querySelector('input[type="checkbox"][name$="DELETE"]');
+                
+                if (deleteCheckbox) {
+                    deleteCheckbox.checked = !deleteCheckbox.checked;
+                    if (deleteCheckbox.checked) {
+                        row.style.opacity = '0.5';
+                        row.style.borderLeftColor = '#dc3545';
+                    } else {
+                        row.style.opacity = '1';
+                        row.style.borderLeftColor = '#0d6efd';
+                    }
                 }
             }
         });
 
+        // Style existing delete-checked rows
         document.querySelectorAll('input[type="checkbox"][name$="DELETE"]').forEach(checkbox => {
             if (checkbox.checked) {
-                checkbox.closest('.formset-row').style.opacity = '0.5';
+                const row = checkbox.closest('.formset-row');
+                row.style.opacity = '0.5';
+                row.style.borderLeftColor = '#dc3545';
             }
         });
     });
